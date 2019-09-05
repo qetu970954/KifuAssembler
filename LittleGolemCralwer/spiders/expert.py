@@ -22,7 +22,9 @@ class ExpertSpider(scrapy.Spider):
             return result
 
         names = response.css(".portlet-body tr td a::text").getall()
-        urls = [response.urljoin(link) for link in response.css(".portlet-body tr td a::attr(href)").getall()]
+
+        # h_ref => hypertext reference, which is a link to another website
+        urls = [response.urljoin(h_ref) for h_ref in response.css(".portlet-body tr td a::attr(href)").getall()]
         elos = get_elos(response)
 
         for name, url, elo in zip(names, urls, elos):
