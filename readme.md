@@ -21,12 +21,13 @@ e.g.:
 ```
 $ scrapy crawl expert -o resources/expert.json
 ```
-Note: You should modify `GLOBALS.py` if you stored the json file in a different place.
+This create an `expert.json` in the `resource` directory, and the crawled data are stored in it.
 
+Note: Modify `GLOBALS.py` if you stored the file in a different place.
 
 ---
 
-Search for the games played by expert (requires expert.json).
+Crawl the games played by expert (this requires `expert.json`).
 
 ```
 $ scrapy crawl expert -o <ExpertGames>
