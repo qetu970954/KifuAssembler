@@ -1,11 +1,13 @@
 # -*- coding: utf-8 -*-
 import scrapy
+
 from LittleGolemCralwer.items import LittlegolemcralwerItem
 
 
 class LgSpider(scrapy.Spider):
     name = 'LG'
-    start_urls = ['http://www.littlegolem.net/jsp/tournament/tournament.jsp?trnid=connect6.ch.27.1.1']
+    start_urls = [f'http://www.littlegolem.net/jsp/tournament/tournament.jsp?trnid=connect6.ch.{i}.1.1'
+                  for i in range(26, 28)]
 
 
     def parse(self, response):
@@ -13,9 +15,10 @@ class LgSpider(scrapy.Spider):
             yield response.follow(game_id, self.parse_game)
 
     def parse_game(self, response):
-        yield response.follow(response.css("a.yellow::attr(href)").get(), self.extract_sgf)
+        yield response.follow(response.css("a.yellow::attr(href)").get(), self.extract_sgf, meta={'url': response.url})
 
     def extract_sgf(self, response):
         item = LittlegolemcralwerItem()
         item['content'] = response.text
+        item['url'] = response.meta['url']
         yield item

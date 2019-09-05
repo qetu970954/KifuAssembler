@@ -10,5 +10,6 @@ import scrapy
 
 class LittlegolemcralwerItem(scrapy.Item):
     # define the fields for your item here like:
+    url = scrapy.Field()
     content = scrapy.Field()
 
