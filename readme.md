@@ -11,12 +11,12 @@ $ cd LittleGolemCralwer
 $ pipenv update
 ```
 ### Usage
-Crawl the website and store the result through `%OutputFile%`
+Crawl the experts for Connect6 and store the result into `%OutputFile%.json`
 ```
-$ scrapy crawl LG -o %%
+$ scrapy crawl expert -o %OutputFile%.json
 ```
 e.g.:
 ```
-$ scrapy crawl LG -o result.json
+$ scrapy crawl expert -o expert.json
 ```
 

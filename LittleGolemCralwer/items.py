@@ -13,3 +13,8 @@ class LittlegolemcralwerItem(scrapy.Item):
     url = scrapy.Field()
     content = scrapy.Field()
 
+
+class Connect6ExpertItem(scrapy.Item):
+    name = scrapy.Field()
+    url = scrapy.Field()
+    elo = scrapy.Field()

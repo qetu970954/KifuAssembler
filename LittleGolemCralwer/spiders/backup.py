@@ -5,10 +5,9 @@ from LittleGolemCralwer.items import LittlegolemcralwerItem
 
 
 class LgSpider(scrapy.Spider):
-    name = 'LG'
+    name = 'backup'
     start_urls = [f'http://www.littlegolem.net/jsp/tournament/tournament.jsp?trnid=connect6.ch.{i}.1.1'
                   for i in range(26, 28)]
-
 
     def parse(self, response):
         for game_id in response.css("div.portlet:nth-child(5) > div:nth-child(2) > table a::attr(href)").getall():
