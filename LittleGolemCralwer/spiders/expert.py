@@ -1,13 +1,15 @@
 # -*- coding: utf-8 -*-
 import scrapy
 
-from LittleGolemCralwer.items import Connect6ExpertItem
+import GLOBALS
+from LittleGolemCralwer.items import Connect6ExpertsItem
 
 
 class ExpertSpider(scrapy.Spider):
-    """This spider tries to crawl the experts for Connect6"""
+    """This spider tries to crawl the experts for Connect6."""
+
     name = 'expert'
-    start_urls = ['http://www.littlegolem.net/jsp/info/player_list.jsp?gtvar=connect6_DEFAULT']
+    start_urls = GLOBALS.CONNECT6_EXPERT_URL
 
     def parse(self, response):
         def get_elos(response):
@@ -21,15 +23,15 @@ class ExpertSpider(scrapy.Spider):
 
             return result
 
-        names = response.css(".portlet-body tr td a::text").getall()
+        players = response.css(".portlet-body tr td a::text").getall()
 
-        # h_ref => hypertext reference, which is a link to another website
-        urls = [response.urljoin(h_ref) for h_ref in response.css(".portlet-body tr td a::attr(href)").getall()]
+        # href => hypertext reference, which is a link to another website
+        urls = [response.urljoin(href) for href in response.css(".portlet-body tr td a::attr(href)").getall()]
         elos = get_elos(response)
 
-        for name, url, elo in zip(names, urls, elos):
-            item = Connect6ExpertItem()
-            item['name'] = name
+        for player, url, elo in zip(players, urls, elos):
+            item = Connect6ExpertsItem()
+            item['player'] = player
             item['url'] = url
             item['elo'] = elo
             yield item
