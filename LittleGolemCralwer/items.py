@@ -17,3 +17,8 @@ class ExpertItem(scrapy.Item):
 class GameItem(scrapy.Item):
     specifier = scrapy.Field()
     url = scrapy.Field()
+
+
+class SgfItem(scrapy.Item):
+    content = scrapy.Field()
+    url = scrapy.Field()
