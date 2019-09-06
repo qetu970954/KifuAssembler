@@ -15,7 +15,7 @@ class GamesSpider(scrapy.Spider):
 
     def parse(self, response):
         for href in response.css("div.portlet table td:nth-child(3) a::attr(href)").getall():
-            if href.find("gtid=connect6") != -1:
+            if "gtid=connect6" in href:
                 url = response.urljoin(href)
                 yield scrapy.Request(url, callback=self.parse_gamelist)
 

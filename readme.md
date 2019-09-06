@@ -12,7 +12,8 @@ $ pipenv update
 ```
 
 ### Usage
-Crawl the Connect6 experts and store the result into `<OutputFile>`
+
+To crawl the Connect6 experts and store the result into `<OutputFile>`
 ```
 $ scrapy crawl expert -o <OutputFile>
 ```
@@ -27,10 +28,10 @@ Note: Modify `GLOBALS.py` if you stored the file in a different place.
 
 ---
 
-Crawl the games played by expert (this requires `expert.json`).
+To crawl the games played by expert (this requires `expert.json`).
 
 ```
-$ scrapy crawl expert -o <ExpertGames>
+$ scrapy crawl expert -o <Outputfile>
 ```
 
 e.g.:
@@ -38,4 +39,13 @@ e.g.:
 $ scrapy crawl game -o resources/game.json
 ```
 
- 
+---
+
+To crawl all games that a players played:
+```
+$ scrapy crawl sgf -o <OutputFile> -a playername=<PlayerName>
+```
+e.g.:
+```shell
+$ scrapy crawl sgf -o resources/Lomaben.json -a playername=Lomaben
+```
