@@ -12,7 +12,7 @@ class GamesSpider(scrapy.Spider):
     """This spider tries to crawl the urls of games played by a specific expert (stored in expert.json)."""
 
     name = 'game'
-    start_urls = Extractor().extract_urls_from_json(GLOBALS.EXPERT_JSON_LOCATION) if \
+    start_urls = Extractor().extract(GLOBALS.EXPERT_JSON_LOCATION, ) if \
         os.path.isfile(GLOBALS.EXPERT_JSON_LOCATION) else []
 
     def parse(self, response):

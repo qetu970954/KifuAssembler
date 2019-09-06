@@ -2,12 +2,12 @@ import json
 
 
 class IExtractor:
-    def extract_urls_from_json(self, filename):
+    def extract(self, filename, attribute):
         raise NotImplementedError
 
 
 class FakeExtractor(IExtractor):
-    def extract_urls_from_json(self, filename):
+    def extract(self, filename, attribute):
         if filename.split(".")[-1] != "json":
             raise Exception("Bad file extension")
         return ["www.yahoo.com.tw",
@@ -17,8 +17,8 @@ class FakeExtractor(IExtractor):
 
 
 class Extractor(IExtractor):
-    def extract_urls_from_json(self, filename):
+    def extract(self, filename, attribute):
         if filename.split(".")[-1] != "json":
             raise Exception("Bad file extension")
         with open(filename) as f:
-            return [chunk['url'] for chunk in json.load(f)]
+            return [chunk[attribute] for chunk in json.load(f)]

@@ -7,7 +7,7 @@ def test_ExtractFromJsonFile_SmallJsonFile_ReturnListOfUrls():
     FakeExtractor()
     extractor = FakeExtractor()
 
-    actual = extractor.extract_urls_from_json(GLOBALS.EXPERT_JSON_LOCATION)
+    actual = extractor.extract(GLOBALS.EXPERT_JSON_LOCATION, 'url')
     expected = ["www.yahoo.com.tw",
                 "www.google.com.tw",
                 "https://ants.example.com/",
@@ -24,4 +24,4 @@ def test_ExtractFromJsonFile_InvalidFileExtension_RaiseException(filename):
     extractor = FakeExtractor()
 
     with pytest.raises(Exception):
-        extractor.extract_urls_from_json(filename)
+        extractor.extract(filename, 'url')
