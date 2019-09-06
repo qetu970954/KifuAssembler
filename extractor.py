@@ -6,7 +6,7 @@ class IExtractor:
         raise NotImplementedError
 
 
-class FakeUrlExtractor(IExtractor):
+class FakeExtractor(IExtractor):
     def extract_urls_from_json(self, filename):
         if filename.split(".")[-1] != "json":
             raise Exception("Bad file extension")
@@ -16,7 +16,7 @@ class FakeUrlExtractor(IExtractor):
                 "http://www.example.org/", ]
 
 
-class UrlExtractor(IExtractor):
+class Extractor(IExtractor):
     def extract_urls_from_json(self, filename):
         if filename.split(".")[-1] != "json":
             raise Exception("Bad file extension")

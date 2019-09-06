@@ -1,11 +1,11 @@
 import pytest
 import GLOBALS
-from extractor import FakeUrlExtractor
+from extractor import FakeExtractor
 
 
 def test_ExtractFromJsonFile_SmallJsonFile_ReturnListOfUrls():
-    FakeUrlExtractor()
-    extractor = FakeUrlExtractor()
+    FakeExtractor()
+    extractor = FakeExtractor()
 
     actual = extractor.extract_urls_from_json(GLOBALS.EXPERT_JSON_LOCATION)
     expected = ["www.yahoo.com.tw",
@@ -21,7 +21,7 @@ def test_ExtractFromJsonFile_SmallJsonFile_ReturnListOfUrls():
     "expert.cfg",
 ])
 def test_ExtractFromJsonFile_InvalidFileExtension_RaiseException(filename):
-    extractor = FakeUrlExtractor()
+    extractor = FakeExtractor()
 
     with pytest.raises(Exception):
         extractor.extract_urls_from_json(filename)
