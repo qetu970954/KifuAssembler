@@ -1,4 +1,5 @@
 import json
+import os
 
 
 class IExtractor:
@@ -18,6 +19,8 @@ class FakeExtractor(IExtractor):
 
 class Extractor(IExtractor):
     def extract(self, filename, attribute):
+        if not os.path.isfile(filename):
+            return []
         if filename.split(".")[-1] != "json":
             raise Exception("Bad file extension")
         with open(filename) as f:

@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-import os.path
 
 import scrapy
 
@@ -12,8 +11,7 @@ class GamesSpider(scrapy.Spider):
     """This spider tries to crawl the urls of games played by a specific expert (stored in expert.json)."""
 
     name = 'game'
-    start_urls = Extractor().extract(GLOBALS.EXPERT_JSON_LOCATION, "url") if \
-        os.path.isfile(GLOBALS.EXPERT_JSON_LOCATION) else []
+    start_urls = Extractor().extract(GLOBALS.EXPERT_JSON_LOCATION, "url")
 
     def parse(self, response):
         for href in response.css("div.portlet table td:nth-child(3) a::attr(href)").getall():
