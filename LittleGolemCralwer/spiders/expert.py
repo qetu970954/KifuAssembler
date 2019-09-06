@@ -2,7 +2,7 @@
 import scrapy
 
 import GLOBALS
-from LittleGolemCralwer.items import Connect6ExpertsItem
+from LittleGolemCralwer.items import ExpertItem
 
 
 class ExpertSpider(scrapy.Spider):
@@ -30,7 +30,7 @@ class ExpertSpider(scrapy.Spider):
         elos = get_elos(response)
 
         for player, url, elo in zip(players, urls, elos):
-            item = Connect6ExpertsItem()
+            item = ExpertItem()
             item['player'] = player
             item['url'] = url
             item['elo'] = elo

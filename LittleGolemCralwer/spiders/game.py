@@ -3,7 +3,7 @@
 import scrapy
 
 import GLOBALS
-from LittleGolemCralwer.items import GamesItem
+from LittleGolemCralwer.items import GameItem
 from extractor import Extractor
 
 
@@ -20,7 +20,7 @@ class GamesSpider(scrapy.Spider):
                 yield scrapy.Request(url, callback=self.parse_gamelist)
 
     def parse_gamelist(self, response):
-        item = GamesItem()
+        item = GameItem()
         item['specifier'] = response.css(".caption::text").get()
         item['url'] = [response.urljoin(href) for href in
                        response.css(".page-content table tr td b a::attr(href)").getall()]
