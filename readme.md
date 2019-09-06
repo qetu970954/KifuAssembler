@@ -35,7 +35,7 @@ $ scrapy crawl expert -o <ExpertGames>
 
 e.g.:
 ```
-$ scrapy crawl game -o resources/expert_games.json
+$ scrapy crawl game -o resources/game.json
 ```
 
  
