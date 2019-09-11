@@ -9,37 +9,11 @@ please install it first before you start.
 $ git clone 
 $ cd LittleGolemCralwer
 $ pipenv update
+$ ./cleanup.cmd
+$ ./setup.cmd
 ```
 
 ### Usage
-
-To crawl the Connect6 experts and store the result into `<OutputFile>`
-```
-$ scrapy crawl expert -o <OutputFile>
-```
-
-e.g.:
-```
-$ scrapy crawl expert -o resources/expert.json
-```
-This create an `expert.json` in the `resource` directory, and the crawled data are stored in it.
-
-Note: Modify `GLOBALS.py` if you stored the file in a different place.
-
----
-
-To crawl the games played by expert (this requires `expert.json`).
-
-```
-$ scrapy crawl expert -o <Outputfile>
-```
-
-e.g.:
-```
-$ scrapy crawl game -o resources/game.json
-```
-
----
 
 To crawl all games that a players played:
 ```
