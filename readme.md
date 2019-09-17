@@ -1,8 +1,11 @@
 ## LittleGolemCrawler
-**This crawler crawls historical sgf files for game Connect6**
+**Crawls historical sgfs for a specific Connect6 player**
 
-Note: This project use [`pipenv`]("https://github.com/pypa/pipenv") to manage dependencies, 
-please install it first before you start. 
+### Before you start
+This project use [`pipenv`]("https://github.com/pypa/pipenv") to manage dependencies, 
+please install it before you start.
+
+ 
 
 ### Clone and Setup 
 ```shell
@@ -23,3 +26,6 @@ e.g.:
 ```shell
 $ scrapy crawl sgf -o resources/Lomaben.json -a playername=Lomaben
 ```
+
+You can see resources/expert.json for available players.
+
