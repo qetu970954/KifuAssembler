@@ -4,7 +4,6 @@ from extractor import FakeExtractor
 
 
 def test_ExtractFromJsonFile_SmallJsonFile_ReturnListOfUrls():
-    FakeExtractor()
     extractor = FakeExtractor()
 
     actual = extractor.extract(GLOBALS.EXPERT_JSON_LOCATION, 'url')
