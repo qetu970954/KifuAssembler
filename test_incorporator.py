@@ -1,12 +1,8 @@
-from collections import namedtuple
-import anytree
-
-BlackMove = namedtuple("BlackMove", ["i", "j"])
-WhiteMove = namedtuple("WhiteMove", ["i", "j"])
+from Move import BlackMove, WhiteMove
+from incorporator import Incorporator
 
 
-# Since Incorporator implicitly uses anytree, we will use this test to identify it's functionality.
-def test_to_tuple_ValidMoves_ReturnCorrectTree():
+def test_toTuple_ValidMoves_ReturnCorrectTree():
     moves = (BlackMove(10, 10),
              WhiteMove(0, 0),
              BlackMove(10, 11))
@@ -14,7 +10,10 @@ def test_to_tuple_ValidMoves_ReturnCorrectTree():
     incorporator = Incorporator(moves)
 
     actual = incorporator.to_tuple()
-    expected = moves
+    expected = ("Root",
+                BlackMove(10, 10),
+                WhiteMove(0, 0),
+                BlackMove(10, 11))
 
     assert actual == expected
 
