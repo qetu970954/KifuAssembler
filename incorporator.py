@@ -1,13 +1,13 @@
 from anytree import AnyNode, RenderTree, PreOrderIter
 
-from NODETYPES import Root
+from util import Root, WhiteMove, BlackMove, sgf_view
 
 
 class Incorporator:
     """
     An incorporator that can merge various game moves into a tree-like structure.
 
-    >>> from NODETYPES import BlackMove, WhiteMove, Root
+    >>> from util import BlackMove, WhiteMove, Root
     >>> moves = [BlackMove(10, 10), WhiteMove(0, 0), BlackMove(10, 11)]
     >>> incorporator = Incorporator(moves)
     >>> incorporator.print_tree()
@@ -61,11 +61,25 @@ class Incorporator:
                     parent = AnyNode(data=mv, parent=parent)
                 break
 
-
     def to_tuple(self):
         return tuple(node.data for node in PreOrderIter(self.root))
+
+
+    def to_sgf(self):
+        def depth_first_traversal(current_node, result):
+            result += sgf_view(current_node.data)
+            for child in current_node.children:
+                if len(current_node.children) >= 2:
+                    result += "(;"
+                else:
+                    result += ";"
+                result = depth_first_traversal(child, result)
+            if len(current_node.children) == 0:
+                result += ")"
+            return result
+
+        return depth_first_traversal(self.root, "")
 
     def print_tree(self):
         for pre, _, node in RenderTree(self.root):
             print(f"{pre}{node.data}")
-
