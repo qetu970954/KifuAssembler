@@ -3,7 +3,7 @@ import GLOBALS
 from extractor import FakeExtractor
 
 
-def test_ExtractFromJsonFile_SmallJsonFile_ReturnListOfUrls():
+def test_Extract_SmallJsonFile_ReturnListOfUrls():
     extractor = FakeExtractor()
 
     actual = extractor.extract(GLOBALS.EXPERT_JSON_LOCATION, 'url')
@@ -19,7 +19,7 @@ def test_ExtractFromJsonFile_SmallJsonFile_ReturnListOfUrls():
     "readme.md",
     "expert.cfg",
 ])
-def test_ExtractFromJsonFile_InvalidFileExtension_RaiseException(filename):
+def test_Extract_InvalidFileExtension_RaiseException(filename):
     extractor = FakeExtractor()
 
     with pytest.raises(Exception):
