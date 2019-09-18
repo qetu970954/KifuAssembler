@@ -1,4 +1,4 @@
-from NodeTypes import BlackMove, WhiteMove, Root
+from NODETYPES import BlackMove, WhiteMove, Root
 from incorporator import Incorporator
 
 
@@ -72,5 +72,18 @@ def test_Incorporate_Nothing_ReturnsCorrectPreOrderTraversalTuple():
 
     actual = incorporator.to_tuple()
     expected = (Root(),)
+
+    assert actual == expected
+
+
+def test_ToSgf_NormalCase_ReturnsCorrectSgf():
+    moves1 = [BlackMove(10, 10), WhiteMove(0, 0), BlackMove(10, 11), ]
+    moves2 = [BlackMove(10, 10), WhiteMove(1, 1), BlackMove(10, 11), ]
+
+    incorporator = Incorporator(moves1)
+    incorporator.incorporate(moves2)
+
+    actual = incorporator.to_sgf()
+    expected = ";B[JJ](;W[AA];B[JK])(;W[BB];B[JK])"
 
     assert actual == expected
