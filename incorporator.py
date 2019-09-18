@@ -1,10 +1,6 @@
-from collections import namedtuple
-
 from anytree import AnyNode, RenderTree, PreOrderIter
 
 from NodeTypes import Root
-
-TraversalNode = namedtuple("TraversalNode", ["TreeNode", "CandidateChild"])
 
 
 class Incorporator:
@@ -32,32 +28,29 @@ class Incorporator:
 
     """
 
-    def __init__(self, moves):
+    def __init__(self, moves=None):
         self.root = AnyNode(data=Root())
-
-        parent_node = self.root
-        for move in moves:
-            parent_node = AnyNode(data=move, parent=parent_node)
+        if moves:
+            self.incorporate(moves)
 
     def incorporate(self, moves: list):
         """
-        Moves are literally a sequence of move on the board.
-        e.g., Root(), BlackMove(), WhiteMove(), BlackMove()
-
         This algorithm incorporate moves into the tree.
         It searches for the first move that has never been seen on the tree,
         and attach the remaining moves to the tree.
         """
+
         current_node = self.root
+
         while moves:
             current_mv = moves.pop(0)
 
-            # Get the specific child if it's content is identical to current_mv
-            result = [child for child in current_node.children if child.data == current_mv]
+            # Get the specific child from current_node which it's content is identical to current_mv
+            result = [c for c in current_node.children if c.data == current_mv]
 
             if result:
-                # If the child exists, update `current_node` to that child
-                # This simply let us walk to a deep tree level
+                # If such child exists, replace `current_node` to that child
+                # This makes us walk to the deeper tree node to search for the first never-seen moves
                 current_node = result[0]
                 continue
 
