@@ -1,6 +1,9 @@
 from anytree import AnyNode, RenderTree, PreOrderIter
 
+from test_lgSgfParser import parse
 from util import Root, WhiteMove, BlackMove, sgf_view
+
+import json
 
 
 class Incorporator:
@@ -64,7 +67,6 @@ class Incorporator:
     def to_tuple(self):
         return tuple(node.data for node in PreOrderIter(self.root))
 
-
     def to_sgf(self):
         def depth_first_traversal(current_node, result):
             result += sgf_view(current_node.data)
@@ -83,3 +85,17 @@ class Incorporator:
     def print_tree(self):
         for pre, _, node in RenderTree(self.root):
             print(f"{pre}{node.data}")
+
+
+if __name__ == '__main__':
+    with open("resources/Lomaben.json") as f:
+        data = json.load(f)
+        sgfs = [chunk["content"] for chunk in data]
+        moves = [parse(sgf) for sgf in sgfs]
+        incorporator = Incorporator()
+        print(len(moves))
+        for mv in moves:
+            incorporator.incorporate(mv)
+
+        with open("merge.sgf", "w") as f:
+            f.write(incorporator.to_sgf())

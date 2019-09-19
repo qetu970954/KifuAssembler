@@ -66,6 +66,24 @@ def test_Incorporate_DifferentMoves_ReturnsCorrectPreOrderTraversalTuple_2():
     assert actual == expected
 
 
+def test_Incorporate_DifferentMoves_ReturnsCorrectPreOrderTraversalTuple_3():
+    moves1 = [BlackMove(0, 0), WhiteMove(0, 1), BlackMove(0, 2), ]
+    moves2 = [BlackMove(0, 0), WhiteMove(0, 2), BlackMove(0, 1), ]
+    moves3 = [BlackMove(0, 0), WhiteMove(0, 2), BlackMove(0, 3), WhiteMove(0, 4), ]
+
+    incorporator = Incorporator(moves1)
+    incorporator.incorporate(moves2)
+    incorporator.incorporate(moves3)
+
+    actual = incorporator.to_tuple()
+    expected = (Root(),
+                BlackMove(0, 0), WhiteMove(0, 1), BlackMove(0, 2),
+                WhiteMove(0, 2), BlackMove(0, 1),
+                BlackMove(0, 3), WhiteMove(0, 4),)
+
+    assert actual == expected
+
+
 def test_Incorporate_Nothing_ReturnsCorrectPreOrderTraversalTuple():
     incorporator = Incorporator()
     incorporator.incorporate([])
