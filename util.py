@@ -1,25 +1,23 @@
-from collections import namedtuple
-
-Root = namedtuple("Root", [])
-
-BlackMove = namedtuple("BlackMove", ["i", "j"], defaults=(0, 0,))
-WhiteMove = namedtuple("WhiteMove", ["i", "j"], defaults=(0, 0,))
+import typing
 
 
-def sgf_view(move):
-    if isinstance(move, Root):
+class Root(typing.NamedTuple):
+    def __str__(self) -> str:
         return ""
 
-    result = ""
-    if isinstance(move, BlackMove):
-        result += "B["
-    elif isinstance(move, WhiteMove):
-        result += "W["
-    else:
-        raise Exception("Unknown move type!")
 
-    result += "ABCDEFGHIJKLMNOPQRS"[move.i]
-    result += "ABCDEFGHIJKLMNOPQRS"[move.j]
-    result += ']'
+class WhiteMove(typing.NamedTuple):
+    i: int = 0
+    j: int = 0
 
-    return result
+    def __str__(self) -> str:
+        return f"W[{'ABCDEFGHIJKLMNOPQRS'[self.i]}{'ABCDEFGHIJKLMNOPQRS'[self.j]}]"
+
+
+class BlackMove(typing.NamedTuple):
+    i: int = 0
+    j: int = 0
+
+    def __str__(self) -> str:
+        return f"B[{'ABCDEFGHIJKLMNOPQRS'[self.i]}{'ABCDEFGHIJKLMNOPQRS'[self.j]}]"
+
