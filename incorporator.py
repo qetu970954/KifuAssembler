@@ -76,8 +76,9 @@ class Incorporator:
                 else:
                     result += ";"
                 result = depth_first_traversal(child, result)
-            if len(current_node.children) == 0:
-                result += ")"
+                if len(current_node.children) >= 2:
+                    result += ")"
+
             return result
 
         return depth_first_traversal(self.root, "")

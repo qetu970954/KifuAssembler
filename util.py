@@ -1,6 +1,7 @@
 from collections import namedtuple
 
 Root = namedtuple("Root", [])
+
 BlackMove = namedtuple("BlackMove", ["i", "j"], defaults=(0, 0,))
 WhiteMove = namedtuple("WhiteMove", ["i", "j"], defaults=(0, 0,))
 
