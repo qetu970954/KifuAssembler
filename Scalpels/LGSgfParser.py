@@ -1,6 +1,6 @@
 from itertools import product
 
-from .util import BlackMove, WhiteMove
+from .util import BlackMove, WhiteMove, BlackMoveWithComment, WhiteMoveWithComment
 
 
 class LGSgfParser:
@@ -17,11 +17,18 @@ class LGSgfParser:
             ("abcdefghijklmnopqrs".index(i), j - 1, "abcdefghijklmnopqrs".index(i2), j2 - 1)
 
     @staticmethod
-    def parse(lg_sgf: str):
+    def parse(lg_sgf: str, url=None):
+        """
+        :param lg_sgf: The Little Golem Sgf string to parse
+        :param url: Attach this url as a comment to the last move if given
+        """
+
         # Split lg_sgf by ';' and discard the element if it is empty.
         moves = [e for e in lg_sgf[1:-1].split(';') if e]
         moves.pop(0)
+
         result = []
+
         for move in moves:
             role = move[0]
             if role == 'B':
@@ -41,5 +48,11 @@ class LGSgfParser:
                     i1, j1, i2, j2 = LGSgfParser.table[move[2:-1]]
                     result.append(WhiteMove(i1, j1))
                     result.append(WhiteMove(i2, j2))
+
+        if url:
+            if isinstance(result[-1], BlackMove):
+                result[-1] = BlackMoveWithComment(result[-1].i, result[-1].j, url)
+            elif isinstance(result[-1], WhiteMove):
+                result[-1] = WhiteMoveWithComment(result[-1].i, result[-1].j, url)
 
         return result

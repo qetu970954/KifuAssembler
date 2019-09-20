@@ -4,10 +4,12 @@ from .incorporator import Incorporator
 
 if __name__ == '__main__':
     sgfs = Extractor().extract("resources/Lomaben.json", "content")
-    moves = [LGSgfParser.parse(sgf) for sgf in sgfs]
+    urls = Extractor().extract("resources/Lomaben.json", "url")
+
+    moves = [(LGSgfParser.parse(sgf, url)) for sgf, url in zip(sgfs, urls)]
+
     incorporator = Incorporator()
 
-    print(len(moves))
     for mv in moves:
         incorporator.incorporate(mv)
 
