@@ -19,6 +19,7 @@ class FakeExtractor(IExtractor):
 
 class Extractor(IExtractor):
     def extract(self, filename, attribute):
+        """Extract specific attribute in a json file"""
         if not os.path.isfile(filename):
             return []
         if filename.split(".")[-1] != "json":

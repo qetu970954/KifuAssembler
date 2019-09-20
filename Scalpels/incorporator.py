@@ -1,13 +1,13 @@
 from anytree import AnyNode, RenderTree, PreOrderIter
 
-from lgSgfMerger.util import Root, WhiteMove, BlackMove
+from Scalpels.util import Root, WhiteMove, BlackMove
 
 
 class Incorporator:
     """
     An incorporator that can merge various game moves into a tree-like structure.
 
-    >>> from lgSgfMerger.util import BlackMove, WhiteMove, Root
+    >>> from Scalpels.util import BlackMove, WhiteMove, Root
     >>> moves = [BlackMove(10, 10), WhiteMove(0, 0), BlackMove(10, 11)]
     >>> incorporator = Incorporator(moves)
     >>> incorporator.print_tree()

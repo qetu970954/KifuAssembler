@@ -1,5 +1,5 @@
-from lgSgfMerger.LGSgfParser import LGSgfParser
-from lgSgfMerger.util import BlackMove, WhiteMove
+from Scalpels.LGSgfParser import LGSgfParser
+from Scalpels.util import BlackMove, WhiteMove
 
 
 def test_parse_LGSgf_ReturnsCorrectMoveList():

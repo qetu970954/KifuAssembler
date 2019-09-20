@@ -1,5 +1,5 @@
-from lgSgfMerger.util import BlackMove, WhiteMove, Root
-from lgSgfMerger.incorporator import Incorporator
+from Scalpels.util import BlackMove, WhiteMove, Root
+from Scalpels.incorporator import Incorporator
 
 
 def test_Ctor_WithValidMoves_ReturnsCorrectPreOrderTraversalTuple():

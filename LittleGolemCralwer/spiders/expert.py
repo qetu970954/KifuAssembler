@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import scrapy
 
-from lgSgfMerger import GLOBALS
+from Scalpels import GLOBALS
 from LittleGolemCralwer.items import ExpertItem
 
 

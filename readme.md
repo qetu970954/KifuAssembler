@@ -1,18 +1,20 @@
 ## LittleGolemCrawler
-**Crawls historical sgfs for a specific Connect6 player**
+**Crawl and assemble historical Kifus for a specific Connect6 player**
 
 ### Before you start
 This project use [`pipenv`]("https://github.com/pypa/pipenv") to manage dependencies, 
 please install it before you start.
 
+### Project Structure
+There are two major components:
+    1. LittleGolemCrawler : Contains crawler that can crawl Kifu from the LG website.
+    2. Scalpels : Contains helper objects and functions for assembling various "Kifu"s.
  
-
 ### Clone and Setup 
 ```shell
-$ git clone 
+$ git clone https://qetu970954@github.com/qetu970954/LittleGolemCralwer.git
 $ cd LittleGolemCralwer
 $ pipenv update
-$ ./cleanup.cmd
 $ ./setup.cmd
 ```
 
