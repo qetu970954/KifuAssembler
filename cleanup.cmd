@@ -1,1 +1,0 @@
-rm resources/expert.json resources/game.json
