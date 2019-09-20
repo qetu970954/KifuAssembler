@@ -1,5 +1,7 @@
 from anytree import AnyNode, RenderTree, PreOrderIter
+
 from lgSgfMerger.util import Root, WhiteMove, BlackMove
+
 
 class Incorporator:
     """

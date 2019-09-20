@@ -100,14 +100,14 @@ def test_ToSgf_NormalCase_ReturnsCorrectSgf():
 
     incorporator = Incorporator(moves1)
     incorporator.incorporate(moves2)
-    incorporator.print_tree()
+
     actual = incorporator.to_sgf()
     expected = ";B[JJ](;W[IK];W[KK])(;W[II];W[JK])"
 
     assert actual == expected
 
 
-def test_ToSgf_NormalCase_ReturnsCorrectSgf():
+def test_ToSgf_NormalCase_ReturnsCorrectSgf_2():
     moves1 = [BlackMove(9, 9), WhiteMove(8, 10), WhiteMove(10, 10), BlackMove(9, 10), BlackMove(9, 11)]
     moves2 = [BlackMove(9, 9), WhiteMove(8, 10), WhiteMove(10, 10), BlackMove(10, 9), BlackMove(11, 9)]
     moves3 = [BlackMove(9, 9), WhiteMove(8, 8), WhiteMove(9, 10), ]
@@ -115,7 +115,7 @@ def test_ToSgf_NormalCase_ReturnsCorrectSgf():
     incorporator = Incorporator(moves1)
     incorporator.incorporate(moves2)
     incorporator.incorporate(moves3)
-    incorporator.print_tree()
+
     actual = incorporator.to_sgf()
     expected = ";B[JJ](;W[IK];W[KK](;B[JK];B[JL])(;B[KJ];B[LJ]))(;W[II];W[JK])"
 

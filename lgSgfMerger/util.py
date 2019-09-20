@@ -20,4 +20,3 @@ class BlackMove(typing.NamedTuple):
 
     def __str__(self) -> str:
         return f"B[{'ABCDEFGHIJKLMNOPQRS'[self.i]}{'ABCDEFGHIJKLMNOPQRS'[self.j]}]"
-

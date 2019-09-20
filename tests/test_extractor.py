@@ -1,4 +1,5 @@
 import pytest
+
 from lgSgfMerger import GLOBALS
 from lgSgfMerger.extractor import FakeExtractor
 
