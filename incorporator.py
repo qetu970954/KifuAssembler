@@ -12,21 +12,21 @@ class Incorporator:
     >>> moves = [BlackMove(10, 10), WhiteMove(0, 0), BlackMove(10, 11)]
     >>> incorporator = Incorporator(moves)
     >>> incorporator.print_tree()
-    Root()
-    └── BlackMove(i=10, j=10)
-        └── WhiteMove(i=0, j=0)
-            └── BlackMove(i=10, j=11)
+    <BLANKLINE>
+    └── B[KK]
+        └── W[AA]
+            └── B[KL]
+
 
     >>> moves2 = [BlackMove(10, 10), WhiteMove(1, 1), BlackMove(10, 11)]
     >>> incorporator.incorporate(moves2)
     >>> incorporator.print_tree()
-    Root()
-    └── BlackMove(i=10, j=10)
-        ├── WhiteMove(i=0, j=0)
-        │   └── BlackMove(i=10, j=11)
-        └── WhiteMove(i=1, j=1)
-            └── BlackMove(i=10, j=11)
-
+    <BLANKLINE>
+    └── B[KK]
+        ├── W[AA]
+        │   └── B[KL]
+        └── W[BB]
+            └── B[KL]
     """
 
     def __init__(self, moves=None):
