@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 import scrapy
 
-import GLOBALS
+from lgSgfMerger import GLOBALS
 from LittleGolemCralwer.items import SgfItem
-from extractor import Extractor
+from lgSgfMerger.extractor import Extractor
 
 
 def generate_start_urls(player_name):

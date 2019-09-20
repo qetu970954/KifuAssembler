@@ -1,7 +1,7 @@
 import json
 
-from LGSgfParser import LGSgfParser
-from incorporator import Incorporator
+from .LGSgfParser import LGSgfParser
+from .incorporator import Incorporator
 
 if __name__ == '__main__':
     with open("resources/Lomaben.json") as f:

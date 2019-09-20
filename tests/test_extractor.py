@@ -1,6 +1,6 @@
 import pytest
-import GLOBALS
-from extractor import FakeExtractor
+from lgSgfMerger import GLOBALS
+from lgSgfMerger.extractor import FakeExtractor
 
 
 def test_Extract_SmallJsonFile_ReturnListOfUrls():

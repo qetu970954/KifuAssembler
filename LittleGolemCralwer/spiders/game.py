@@ -2,9 +2,9 @@
 
 import scrapy
 
-import GLOBALS
+from lgSgfMerger import GLOBALS
 from LittleGolemCralwer.items import GameItem
-from extractor import Extractor
+from lgSgfMerger.extractor import Extractor
 
 
 class GamesSpider(scrapy.Spider):

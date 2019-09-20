@@ -1,6 +1,6 @@
 from itertools import product
 
-from util import BlackMove, WhiteMove
+from .util import BlackMove, WhiteMove
 
 
 class LGSgfParser:

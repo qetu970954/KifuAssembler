@@ -1,5 +1,5 @@
-from util import BlackMove, WhiteMove, Root
-from incorporator import Incorporator
+from lgSgfMerger.util import BlackMove, WhiteMove, Root
+from lgSgfMerger.incorporator import Incorporator
 
 
 def test_Ctor_WithValidMoves_ReturnsCorrectPreOrderTraversalTuple():
@@ -105,6 +105,7 @@ def test_ToSgf_NormalCase_ReturnsCorrectSgf():
     expected = ";B[JJ](;W[IK];W[KK])(;W[II];W[JK])"
 
     assert actual == expected
+
 
 def test_ToSgf_NormalCase_ReturnsCorrectSgf():
     moves1 = [BlackMove(9, 9), WhiteMove(8, 10), WhiteMove(10, 10), BlackMove(9, 10), BlackMove(9, 11)]
