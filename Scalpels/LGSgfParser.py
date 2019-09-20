@@ -5,7 +5,7 @@ from .util import BlackMove, WhiteMove
 
 class LGSgfParser:
     """
-    Little Golem Sgf parser that can convert a sgf into sequence of moves.
+    Little Golem Sgf parser that can convert a sgf into a sequence of moves.
     """
     table = {}
 

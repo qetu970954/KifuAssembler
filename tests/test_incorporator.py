@@ -1,5 +1,5 @@
-from Scalpels.util import BlackMove, WhiteMove, Root
 from Scalpels.incorporator import Incorporator
+from Scalpels.util import BlackMove, WhiteMove, Root, WhiteMoveWithComment
 
 
 def test_Ctor_WithValidMoves_ReturnsCorrectPreOrderTraversalTuple():
@@ -118,5 +118,18 @@ def test_ToSgf_NormalCase_ReturnsCorrectSgf_2():
 
     actual = incorporator.to_sgf()
     expected = ";B[JJ](;W[IK];W[KK](;B[JK];B[JL])(;B[KJ];B[LJ]))(;W[II];W[JK])"
+
+    assert actual == expected
+
+
+def test_ToSgf_WithComment_ReturnsCorrectSgf():
+    moves1 = [BlackMove(9, 9), WhiteMove(8, 10), WhiteMoveWithComment(10, 10, "SAMPLE_URL"), ]
+    moves2 = [BlackMove(9, 9), WhiteMove(8, 8), WhiteMove(9, 10), ]
+
+    incorporator = Incorporator(moves1)
+    incorporator.incorporate(moves2)
+
+    actual = incorporator.to_sgf()
+    expected = ";B[JJ](;W[IK];W[KK]C[SAMPLE_URL])(;W[II];W[JK])"
 
     assert actual == expected
