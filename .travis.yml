@@ -10,5 +10,4 @@ script:
   - pipenv run python -m doctest Scalpels.incorporator.py
 
 after_success:
-  - export CODECOV_TOKEN="b1fddf6e-743d-4fd0-8224-88186222b9aa"
   - bash <(curl -s https://codecov.io/bash)
