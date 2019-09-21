@@ -1,4 +1,7 @@
 ## LittleGolemCrawler
+[![Build Status](https://travis-ci.com/qetu970954/LittleGolemCralwer.svg?token=7esN258CaAa7xyc7UmSY&branch=master)](https://travis-ci.com/qetu970954/LittleGolemCralwer)
+
+
 **Crawl and assemble historical Kifus for a specific Connect6 player**
 
 ### Before you start

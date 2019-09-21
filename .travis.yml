@@ -1,10 +1,9 @@
 language: python
 python:
-  - "3.6"
   - "3.7"
 install:
   - pip install pipenv
   - pipenv install
 script:
   - pipenv run python -m pytest --cov=./
-  - pipenv run python -m doctest lgSgfMerger.incorporator.py
+  - pipenv run python -m doctest Scalpels.incorporator.py
