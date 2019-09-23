@@ -37,34 +37,37 @@ class Incorporator:
     def incorporate(self, moves: list, url="_sample_url_"):
         """
         This algorithm incorporate moves into the tree.
-
-        It searches for the first move that has never been seen on the tree,
-        and attach the remaining moves to the tree.
-        The url will be assigned to the last tree node
         """
 
+        # Define the root node
         current_node = self.root
 
         while moves:
             current_mv = moves.pop(0)
 
-            # Get the specific child from current_node which it's content is identical to current_mv
-            result = [c for c in current_node.children if c.data == current_mv]
+            # Get the specific child from current_node which's content is identical to current_mv
+            results = [c for c in current_node.children if c.data == current_mv]
 
-            if result:
+            if results:
                 # If such child exists, replace `current_node` to that child
                 # This makes us walk to the deeper tree node to search for the first never-seen moves
-                current_node = result[0]
+                current_node = results[0]
                 current_node.visit_cnt += 1
-                current_node.urls.append(url)
-                continue
+
 
             else:
-                # Otherwise, attach the remaining moves into a new branch in the tree
-                parent = AnyNode(data=current_mv, parent=current_node, visit_cnt=1, urls=[url, ])
-                for mv in moves:
-                    parent = AnyNode(data=mv, parent=parent, visit_cnt=1, urls=[url, ])
-                break
+                # Otherwise, attach a new node to the tree
+                current_node = AnyNode(
+                    data=current_mv,
+                    parent=current_node,
+                    visit_cnt=1,
+                    urls=[],
+                    is_terminate_node=False
+                )
+
+            if len(moves) == 0:
+                current_node.urls.append(url)
+                current_node.is_terminate_node = True
 
     def to_tuple(self):
         return tuple(node.data for node in PreOrderIter(self.root))
@@ -79,7 +82,7 @@ class Incorporator:
         def depth_first_traversal(current_node, result):
             result += str(current_node.data)
 
-            if current_node.urls:
+            if current_node.urls and current_node.is_terminate_node:
                 result += f"C[Game urls   := "
                 result += ", ".join(current_node.urls)
                 result += "\n]"
