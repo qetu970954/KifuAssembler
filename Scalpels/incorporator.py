@@ -29,7 +29,7 @@ class Incorporator:
     """
 
     def __init__(self, moves=None):
-        self.root = AnyNode(data=Root())
+        self.root = AnyNode(data=Root(), visit_cnt=1)
         if moves:
             self.incorporate(moves)
 
@@ -52,21 +52,30 @@ class Incorporator:
                 # If such child exists, replace `current_node` to that child
                 # This makes us walk to the deeper tree node to search for the first never-seen moves
                 current_node = result[0]
+                current_node.visit_cnt += 1
                 continue
 
             else:
                 # Otherwise, attach the remaining moves into a new branch in the tree
-                parent = AnyNode(data=current_mv, parent=current_node)
+                parent = AnyNode(data=current_mv, parent=current_node, visit_cnt=1)
                 for mv in moves:
-                    parent = AnyNode(data=mv, parent=parent)
+                    parent = AnyNode(data=mv, parent=parent, visit_cnt=1)
                 break
 
     def to_tuple(self):
         return tuple(node.data for node in PreOrderIter(self.root))
 
     def to_sgf(self):
+        """
+        Convert the internal tree into a sgf string.
+
+        :return: the sgf string
+        """
+
         def depth_first_traversal(current_node, result):
             result += str(current_node.data)
+            if current_node.visit_cnt >= 2:
+                result += f"C[Visit Count := {current_node.visit_cnt}\n]"
             for child in current_node.children:
                 if len(current_node.children) >= 2:
                     result += "(;"
@@ -75,7 +84,6 @@ class Incorporator:
                 result = depth_first_traversal(child, result)
                 if len(current_node.children) >= 2:
                     result += ")"
-
             return result
 
         return depth_first_traversal(self.root, "")

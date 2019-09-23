@@ -4,9 +4,11 @@ python:
 
 env:
   - CODECOV_TOKEN="b1fddf6e-743d-4fd0-8224-88186222b9aa"
+
 install:
   - pip install pipenv
   - pipenv install
+
 script:
   - pipenv run python -m pytest --cov=./ --doctest-modules
 

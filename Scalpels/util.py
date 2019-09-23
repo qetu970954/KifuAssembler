@@ -92,7 +92,6 @@ class BlackMoveWithComment(BlackMove):
     False
     """
 
-
     def __init__(self, i, j, *, visit_cnt=0, comment=""):
         super().__init__(i, j, visit_cnt=visit_cnt)
         self.comment = comment
