@@ -10,7 +10,10 @@ install:
   - pipenv install
 
 script:
+  - rm resources/expert.json resources/game.json
+  - scrapy crawl expert -o resources/expert.json
+  - scrapy crawl game -o resources/game.json
   - pipenv run python -m pytest --cov=./ --doctest-modules
-
+  
 after_success:
   - bash <(curl -s https://codecov.io/bash)
