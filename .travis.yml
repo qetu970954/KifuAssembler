@@ -10,7 +10,6 @@ install:
   - pipenv install
 
 script:
-  - mkdir resources
   - scrapy crawl expert -o resources/expert.json
   - scrapy crawl game -o resources/game.json
   - pipenv run python -m pytest --cov=./ --doctest-modules
