@@ -8,8 +8,7 @@ install:
   - pip install pipenv
   - pipenv install
 script:
-  - pipenv run python -m pytest --cov=./
-  - pipenv run python -m doctest Scalpels.incorporator.py
+  - pipenv run python -m pytest --cov=./ --doctest-modules
 
 after_success:
   - bash <(curl -s https://codecov.io/bash)

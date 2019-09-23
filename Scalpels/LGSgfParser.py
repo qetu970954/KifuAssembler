@@ -51,8 +51,8 @@ class LGSgfParser:
 
         if url:
             if isinstance(result[-1], BlackMove):
-                result[-1] = BlackMoveWithComment(result[-1].i, result[-1].j, url)
+                result[-1] = BlackMoveWithComment(result[-1].i, result[-1].j, comment=url)
             elif isinstance(result[-1], WhiteMove):
-                result[-1] = WhiteMoveWithComment(result[-1].i, result[-1].j, url)
+                result[-1] = WhiteMoveWithComment(result[-1].i, result[-1].j, comment=url)
 
         return result

@@ -123,7 +123,7 @@ def test_ToSgf_NormalCase_ReturnsCorrectSgf_2():
 
 
 def test_ToSgf_WithComment_ReturnsCorrectSgf():
-    moves1 = [BlackMove(9, 9), WhiteMove(8, 10), WhiteMoveWithComment(10, 10, "SAMPLE_URL"), ]
+    moves1 = [BlackMove(9, 9), WhiteMove(8, 10), WhiteMoveWithComment(10, 10, comment="SAMPLE_URL"), ]
     moves2 = [BlackMove(9, 9), WhiteMove(8, 8), WhiteMove(9, 10), ]
 
     incorporator = Incorporator(moves1)

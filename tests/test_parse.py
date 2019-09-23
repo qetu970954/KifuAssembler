@@ -13,6 +13,6 @@ def test_parse_LGSgf_ReturnsCorrectMoveList():
                 BlackMove(10, 8),
                 BlackMove(11, 7),
                 WhiteMove(10, 9),
-                WhiteMoveWithComment(8, 10, "SAMPLE"), ]
+                WhiteMoveWithComment(8, 10, comment="SAMPLE"), ]
 
     assert actual == expected
