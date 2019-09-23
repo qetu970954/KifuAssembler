@@ -26,18 +26,21 @@ class Incorporator:
         │   └── B[KL]
         └── W[BB]
             └── B[KL]
+
     """
 
-    def __init__(self, moves=None):
-        self.root = AnyNode(data=Root(), visit_cnt=1)
+    def __init__(self, moves=None, url="_sample_url_"):
+        self.root = AnyNode(data=Root(), visit_cnt=1, urls=[], is_terminate_node=False)
         if moves:
-            self.incorporate(moves)
+            self.incorporate(moves, url)
 
-    def incorporate(self, moves: list):
+    def incorporate(self, moves: list, url="_sample_url_"):
         """
         This algorithm incorporate moves into the tree.
+
         It searches for the first move that has never been seen on the tree,
         and attach the remaining moves to the tree.
+        The url will be assigned to the last tree node
         """
 
         current_node = self.root
@@ -53,13 +56,14 @@ class Incorporator:
                 # This makes us walk to the deeper tree node to search for the first never-seen moves
                 current_node = result[0]
                 current_node.visit_cnt += 1
+                current_node.urls.append(url)
                 continue
 
             else:
                 # Otherwise, attach the remaining moves into a new branch in the tree
-                parent = AnyNode(data=current_mv, parent=current_node, visit_cnt=1)
+                parent = AnyNode(data=current_mv, parent=current_node, visit_cnt=1, urls=[url, ])
                 for mv in moves:
-                    parent = AnyNode(data=mv, parent=parent, visit_cnt=1)
+                    parent = AnyNode(data=mv, parent=parent, visit_cnt=1, urls=[url, ])
                 break
 
     def to_tuple(self):
@@ -74,16 +78,26 @@ class Incorporator:
 
         def depth_first_traversal(current_node, result):
             result += str(current_node.data)
+
+            if current_node.urls:
+                result += f"C[Game urls   := "
+                result += ", ".join(current_node.urls)
+                result += "\n]"
+
             if current_node.visit_cnt >= 2:
                 result += f"C[Visit Count := {current_node.visit_cnt}\n]"
+
             for child in current_node.children:
                 if len(current_node.children) >= 2:
                     result += "(;"
                 else:
                     result += ";"
+
                 result = depth_first_traversal(child, result)
+
                 if len(current_node.children) >= 2:
                     result += ")"
+
             return result
 
         return depth_first_traversal(self.root, "")

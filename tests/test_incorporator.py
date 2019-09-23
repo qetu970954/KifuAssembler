@@ -102,9 +102,14 @@ def test_ToSgf_NormalCase_ReturnsCorrectSgf():
     incorporator.incorporate(moves2)
 
     actual = incorporator.to_sgf()
-    expected = ";B[JJ]C[Visit Count := 2\n" \
-               "](;W[IK];W[KK])(;W[II];W[JK])"
-
+    expected = (";B[JJ]C[Game urls   := _sample_url_, _sample_url_\n"
+                "]C[Visit Count := 2\n"
+                "](;W[IK]C[Game urls   := _sample_url_\n"
+                "];W[KK]C[Game urls   := _sample_url_\n"
+                "])(;W[II]C[Game urls   := _sample_url_\n"
+                "];W[JK]C[Game urls   := _sample_url_\n"
+                "])")
+    print(actual)
     assert actual == expected
 
 
@@ -118,23 +123,19 @@ def test_ToSgf_NormalCase_ReturnsCorrectSgf_2():
     incorporator.incorporate(moves3)
 
     actual = incorporator.to_sgf()
-    expected = ";B[JJ]C[Visit Count := 3\n" \
-               "](;W[IK]C[Visit Count := 2\n" \
-               "];W[KK]C[Visit Count := 2\n" \
-               "](;B[JK];B[JL])(;B[KJ];B[LJ]))(;W[II];W[JK])"
+    print(actual)
+    expected = (";B[JJ]C[Game urls   := _sample_url_, _sample_url_, _sample_url_\n"
+                "]C[Visit Count := 3\n"
+                "](;W[IK]C[Game urls   := _sample_url_, _sample_url_\n"
+                "]C[Visit Count := 2\n"
+                "];W[KK]C[Game urls   := _sample_url_, _sample_url_\n"
+                "]C[Visit Count := 2\n"
+                "](;B[JK]C[Game urls   := _sample_url_\n"
+                "];B[JL]C[Game urls   := _sample_url_\n"
+                "])(;B[KJ]C[Game urls   := _sample_url_\n"
+                "];B[LJ]C[Game urls   := _sample_url_\n"
+                "]))(;W[II]C[Game urls   := _sample_url_\n"
+                "];W[JK]C[Game urls   := _sample_url_\n"
+                "])")
 
     assert actual == expected
-
-
-# def test_ToSgf_WithComment_ReturnsCorrectSgf():
-#     moves1 = [BlackMove(9, 9), WhiteMove(8, 10), WhiteMoveWithComment(10, 10, comment="SAMPLE_URL"), ]
-#     moves2 = [BlackMove(9, 9), WhiteMove(8, 8), WhiteMove(9, 10), ]
-#
-#     incorporator = Incorporator(moves1)
-#     incorporator.incorporate(moves2)
-#
-#     actual = incorporator.to_sgf()
-#     expected = ";B[JJ]C[Visit Count := 2\n" \
-#                "](;W[IK];W[KK]C[SAMPLE_URL])(;W[II];W[JK])"
-#
-#     assert actual == expected

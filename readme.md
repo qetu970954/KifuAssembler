@@ -34,3 +34,8 @@ $ scrapy crawl sgf -o resources/Lomaben.json -a playername=Lomaben
 
 You can see resources/expert.json for available players.
 
+To merge the crawled Kifu into a single one:
+
+```shell
+$ python -m Scalpels.main
+```
