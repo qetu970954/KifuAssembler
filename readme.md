@@ -1,41 +1,48 @@
-## LittleGolemCrawler
+# KifuAssembler
 [![Build Status](https://travis-ci.com/qetu970954/LittleGolemCralwer.svg?token=7esN258CaAa7xyc7UmSY&branch=master)](https://travis-ci.com/qetu970954/LittleGolemCralwer)
 
 
-**Crawl and assemble historical Kifus for a specific Connect6 player**
+**Crawls and Assembles historical Kifus of a specific Connect6 player**
 
-### Before you start
-This project use [`pipenv`]("https://github.com/pypa/pipenv") to manage dependencies, 
-please install it before you start.
+## Before you start
+This project use `pipenv` to manage the dependencies, however there are several ways to install `pipenv`.
+Please see https://docs.pipenv.org/en/latest/install/#installing-pipenv for installation.
 
-### Project Structure
-There are two major components:
-    1. LittleGolemCrawler : Contains crawler that can crawl Kifu from the LG website.
-    2. Scalpels : Contains helper objects and functions for assembling various "Kifu"s.
- 
-### Clone and Setup 
-```shell
-$ git clone https://qetu970954@github.com/qetu970954/LittleGolemCralwer.git
-$ cd LittleGolemCralwer
+## Clone and Setup 
+Clone the project and update pipenv:
+```bash
+$ git clone https://github.com/qetu970954/KifuAssembler.git
+$ cd KifuAssembler
 $ pipenv update
-$ ./setup.cmd
 ```
 
-### Usage
-
-To crawl all games that a players played:
+Run setup script:
+```bash
+$ ./windows_setup.cmd   # On Windows
+$ ./ubuntu_setup.sh    # On Ubuntu
 ```
-$ scrapy crawl sgf -o <OutputFile> -a playername=<PlayerName>
+This should generates `expert.json` and `game.json` in the `results/` directory,
+and some crawled information are stored inside these file.
+
+### Crawl !!
+Let scrapy crawl the kifu for `$PlayerName` and store the result to `$OutputFile` 
+```
+$ scrapy crawl kifu -a playername=<PlayerName> -o <OutputFile> 
 ```
 e.g.:
 ```shell
-$ scrapy crawl sgf -o resources/Lomaben.json -a playername=Lomaben
+$ scrapy crawl kifu -a playername=Lomaben -o results/Lomaben.json
 ```
+This spider internally looks for `results/game.json` and use it's content, so you must make sure that file exist before you run this.
 
-You can see resources/expert.json for available players.
+### Assemble !!
 
-To merge the crawled Kifu into a single one:
-
+Let KifuAssembler assemble the kifu's you crawled
 ```shell
-$ python -m Scalpels.main
+$ python -m KifuAssembler.assemble -s=<InputFile> -o=<OutputFile> 
+```
+If not specified, the result will be put in `results/result.sgf`
+e.g.:
+```shell
+$ python -m KifuAssembler.assemble -s=results/Lomaben.json
 ```

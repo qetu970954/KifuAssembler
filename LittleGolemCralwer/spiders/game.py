@@ -2,13 +2,16 @@
 
 import scrapy
 
-from Scalpels import GLOBALS
+import GLOBALS
 from LittleGolemCralwer.items import GameItem
-from Scalpels.extractor import Extractor
+from KifuAssembler.extractor import Extractor
 
 
 class GamesSpider(scrapy.Spider):
-    """This spider tries to crawl the urls of games played by a specific expert (stored in expert.json)."""
+    """
+    This spider tries to crawl the urls of games played by a specific expert.
+    See samples/sample_game.json as an example of the result.
+    """
 
     name = 'game'
     start_urls = Extractor().extract(GLOBALS.EXPERT_JSON_LOCATION, "url")

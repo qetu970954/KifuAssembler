@@ -19,6 +19,6 @@ class GameItem(scrapy.Item):
     url = scrapy.Field()
 
 
-class SgfItem(scrapy.Item):
-    content = scrapy.Field()
+class KifuItem(scrapy.Item):
+    kifu = scrapy.Field()
     url = scrapy.Field()

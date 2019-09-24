@@ -1,12 +1,15 @@
 # -*- coding: utf-8 -*-
 import scrapy
 
-from Scalpels import GLOBALS
+import GLOBALS
 from LittleGolemCralwer.items import ExpertItem
 
 
 class ExpertSpider(scrapy.Spider):
-    """This spider tries to crawl the experts for Connect6."""
+    """
+    This spider tries to crawl the experts of game Connect6.
+    See samples/sample_expert.json as an example of the result.
+    """
 
     name = 'expert'
     start_urls = GLOBALS.CONNECT6_EXPERT_URL

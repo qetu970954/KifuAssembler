@@ -1,5 +1,5 @@
-from Scalpels.incorporator import Incorporator
-from Scalpels.util import BlackMove, WhiteMove, Root
+from KifuAssembler.incorporator import Incorporator, KifuParser
+from KifuAssembler.data_types import Root, WhiteMove, BlackMove
 
 
 def test_Ctor_WithValidMoves_ReturnsCorrectPreOrderTraversalTuple():
@@ -102,10 +102,10 @@ def test_ToSgf_NormalCase_ReturnsCorrectSgf():
     incorporator.incorporate(moves2)
 
     actual = incorporator.to_sgf()
-    expected = (";B[JJ]C[Visit Count := 2\n"
-                "](;W[IK];W[KK]C[Game urls   := _sample_url_\n"
-                "])(;W[II];W[JK]C[Game urls   := _sample_url_\n"
-                "])")
+    expected = ("(;B[jj]C[Visit Count := 2\n"
+                "](;W[ik];W[kk]C[Game urls   := _sample_url_\n"
+                "])(;W[ii];W[jk]C[Game urls   := _sample_url_\n"
+                "]))")
 
     assert actual == expected
 
@@ -120,13 +120,13 @@ def test_ToSgf_NormalCase_ReturnsCorrectSgf_2():
     incorporator.incorporate(moves3)
 
     actual = incorporator.to_sgf()
-    expected = (";B[JJ]C[Visit Count := 3\n"
-                "](;W[IK]C[Visit Count := 2\n"
-                "];W[KK]C[Visit Count := 2\n"
-                "](;B[JK];B[JL]C[Game urls   := _sample_url_\n"
-                "])(;B[KJ];B[LJ]C[Game urls   := _sample_url_\n"
-                "]))(;W[II];W[JK]C[Game urls   := _sample_url_\n"
-                "])")
+    expected = ("(;B[jj]C[Visit Count := 3\n"
+                "](;W[ik]C[Visit Count := 2\n"
+                "];W[kk]C[Visit Count := 2\n"
+                "](;B[jk];B[jl]C[Game urls   := _sample_url_\n"
+                "])(;B[kj];B[lj]C[Game urls   := _sample_url_\n"
+                "]))(;W[ii];W[jk]C[Game urls   := _sample_url_\n"
+                "]))")
 
     assert actual == expected
 
@@ -141,12 +141,33 @@ def test_ToSgf_NormalCase_ReturnsCorrectSgf_3():
     incorporator.incorporate(moves3)
 
     actual = incorporator.to_sgf()
-    expected = (";B[JJ]C[Game urls   := _sample_url_\n"
+    expected = ("(;B[jj]C[Game urls   := _sample_url_\n"
                 "]C[Visit Count := 3\n"
-                "];W[IK]C[Visit Count := 2\n"
-                "];W[KK]C[Visit Count := 2\n"
-                "](;B[JK];B[JL]C[Game urls   := _sample_url_\n"
-                "])(;B[KJ];B[LJ]C[Game urls   := _sample_url_\n"
-                "])")
+                "];W[ik]C[Visit Count := 2\n"
+                "];W[kk]C[Visit Count := 2\n"
+                "](;B[jk];B[jl]C[Game urls   := _sample_url_\n"
+                "])(;B[kj];B[lj]C[Game urls   := _sample_url_\n"
+                "]))")
+
+    assert actual == expected
+
+
+def test_parse_Kifu_ReturnsCorrectMoveList():
+    """
+    The kifu is in smart game format
+    :return:
+    """
+    sample_kifu = "(;FF[4]EV[connect6.ch.26.1.1]PB[Phoenix]PW[Lomaben]SO[http://www.littlegolem.com];B[j10];W[j9l11];" \
+                 "B[k9l8];W[k10i11])"
+
+    actual = KifuParser.parse(sample_kifu)
+
+    expected = [BlackMove(9, 9),
+                WhiteMove(9, 8),
+                WhiteMove(11, 10),
+                BlackMove(10, 8),
+                BlackMove(11, 7),
+                WhiteMove(10, 9),
+                WhiteMove(8, 10), ]
 
     assert actual == expected
