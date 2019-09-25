@@ -1,7 +1,7 @@
 import pytest
 
-from Scalpels import GLOBALS
-from Scalpels.extractor import FakeExtractor
+import GLOBALS
+from KifuAssembler.extractor import FakeExtractor
 
 
 def test_Extract_SmallJsonFile_ReturnListOfUrls():

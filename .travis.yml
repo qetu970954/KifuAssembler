@@ -4,12 +4,16 @@ python:
 
 env:
   - CODECOV_TOKEN="b1fddf6e-743d-4fd0-8224-88186222b9aa"
+
 install:
   - pip install pipenv
   - pipenv install
+
 script:
-  - pipenv run python -m pytest --cov=./
-  - pipenv run python -m doctest Scalpels.incorporator.py
+  - pipenv run python -m pytest --cov=./ --doctest-modules
+  - sh ubuntu_setup.sh
+  - scrapy crawl kifu -a playername=Lomaben -o results/Lomaben.json
+  - python -m KifuAssembler.assemble -s=results/Lomaben.json
 
 after_success:
   - bash <(curl -s https://codecov.io/bash)

@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 import scrapy
 
-from Scalpels import GLOBALS
-from LittleGolemCralwer.items import SgfItem
-from Scalpels.extractor import Extractor
+import GLOBALS
+from KifuAssembler.extractor import Extractor
+from LittleGolemCralwer.items import KifuItem
 
 
 def generate_start_urls(player_name):
@@ -14,18 +14,26 @@ def generate_start_urls(player_name):
             return urls
 
 
-class SgfSpider(scrapy.Spider):
-    name = 'sgf'
+class KifuSpider(scrapy.Spider):
+    """
+    This spider tries to crawl the raw kifu of games played by a given expert.
+    See samples/sample_Lomaben.json as an example of kifus that an expert "Lomaben" played.
+    """
+
+    name = 'kifu'
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.start_urls = generate_start_urls(self.playername)
+        try:
+            self.start_urls = generate_start_urls(self.playername)
+        except AttributeError:
+            print("Please specify player name in the command line argument (see readme)")
 
     def parse(self, response):
         yield response.follow(response.css("a.yellow::attr(href)").get(), self.extract_sgf, meta={'url': response.url})
 
     def extract_sgf(self, response):
-        item = SgfItem()
-        item['content'] = response.text
+        item = KifuItem()
+        item['kifu'] = response.text
         item['url'] = response.meta['url']
         yield item
