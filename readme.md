@@ -1,5 +1,9 @@
 # KifuAssembler
-[![Build Status](https://travis-ci.com/qetu970954/LittleGolemCralwer.svg?token=7esN258CaAa7xyc7UmSY&branch=master)](https://travis-ci.com/qetu970954/LittleGolemCralwer)
+
+[![Build Status](https://travis-ci.com/qetu970954/KifuAssembler.svg?branch=master)](https://travis-ci.com/qetu970954/KifuAssembler)
+
+[![codecov](https://codecov.io/gh/qetu970954/LittleGolemCralwer/branch/master/graph/badge.svg)](https://codecov.io/gh/qetu970954/LittleGolemCralwer)
+
 
 
 **Crawls and Assembles historical Kifus of a specific Connect6 player**
