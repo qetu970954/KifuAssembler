@@ -18,6 +18,7 @@ Clone the project and update pipenv:
 $ git clone https://github.com/qetu970954/KifuAssembler.git
 $ cd KifuAssembler
 $ pipenv update
+$ pipenv shell
 ```
 
 Run setup script:
