@@ -14,6 +14,9 @@ class KifuParser:
     for i, j in product("abcdefghijklmnopqrs", range(1, 20)):
         table[f"{i}{j}"] = ("abcdefghijklmnopqrs".index(i), j - 1)
 
+    for i, j in product("abcdefghijklmnopqrs", "abcdefghijklmnopqrs"):
+        table[f"{i}{j}"] = ("abcdefghijklmnopqrs".index(i), "abcdefghijklmnopqrs".index(j))
+
     for i, j, i2, j2 in product("abcdefghijklmnopqrs", range(1, 20), "abcdefghijklmnopqrs", range(1, 20)):
         table[f"{i}{j}{i2}{j2}"] = \
             ("abcdefghijklmnopqrs".index(i), j - 1, "abcdefghijklmnopqrs".index(i2), j2 - 1)
@@ -26,23 +29,25 @@ class KifuParser:
 
         result = []
 
+        # For each moves, take out the mapped action and transform to Objects
         for move in moves:
             role = move[0]
+            action_key = move[2:move.index("]")]
             if role == 'B':
-                if len(KifuParser.table[move[2:-1]]) == 2:
-                    i, j = KifuParser.table[move[2:-1]]
+                if len(KifuParser.table[action_key]) == 2:
+                    i, j = KifuParser.table[action_key]
                     result.append(BlackMove(i, j))
-                elif len(KifuParser.table[move[2:-1]]) == 4:
-                    i1, j1, i2, j2 = KifuParser.table[move[2:-1]]
+                elif len(KifuParser.table[action_key]) == 4:
+                    i1, j1, i2, j2 = KifuParser.table[action_key]
                     result.append(BlackMove(i1, j1))
                     result.append(BlackMove(i2, j2))
 
             elif role == 'W':
-                if len(KifuParser.table[move[2:-1]]) == 2:
-                    i, j = KifuParser.table[move[2:-1]]
+                if len(KifuParser.table[action_key]) == 2:
+                    i, j = KifuParser.table[action_key]
                     result.append(WhiteMove(i, j))
-                elif len(KifuParser.table[move[2:-1]]) == 4:
-                    i1, j1, i2, j2 = KifuParser.table[move[2:-1]]
+                elif len(KifuParser.table[action_key]) == 4:
+                    i1, j1, i2, j2 = KifuParser.table[action_key]
                     result.append(WhiteMove(i1, j1))
                     result.append(WhiteMove(i2, j2))
 
