@@ -1,18 +1,17 @@
 # -*- coding: utf-8 -*-
 import scrapy
 
-from LittleGolemCralwer.spiders import GLOBALS
+from LittleGolemCralwer.spiders import config
 from LittleGolemCralwer.items import ExpertItem
 
 
 class ExpertSpider(scrapy.Spider):
     """
     This spider tries to crawl the experts of game Connect6.
-    See samples/sample_expert.json as an example of the result.
     """
 
     name = 'expert'
-    start_urls = GLOBALS.CONNECT6_EXPERT_URL
+    start_urls = config.CONNECT6_EXPERT_URL
 
     def parse(self, response):
         def get_elos(response):

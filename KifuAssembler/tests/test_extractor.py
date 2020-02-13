@@ -1,13 +1,13 @@
 import pytest
 
-from LittleGolemCralwer.spiders import GLOBALS
+from LittleGolemCralwer.spiders import config
 from KifuAssembler.extractor import FakeExtractor
 
 
 def test_Extract_SmallJsonFile_ReturnListOfUrls():
     extractor = FakeExtractor()
 
-    actual = extractor.extract(GLOBALS.EXPERT_JSON_LOCATION, 'url')
+    actual = extractor.extract(config.EXPERT_JSON_LOCATION, 'url')
     expected = ["www.yahoo.com.tw",
                 "www.google.com.tw",
                 "https://ants.example.com/",

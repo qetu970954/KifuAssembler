@@ -2,7 +2,7 @@
 
 import scrapy
 
-from LittleGolemCralwer.spiders import GLOBALS
+from LittleGolemCralwer.spiders import config
 from LittleGolemCralwer.items import GameItem
 from KifuAssembler.extractor import Extractor
 
@@ -10,11 +10,10 @@ from KifuAssembler.extractor import Extractor
 class GamesSpider(scrapy.Spider):
     """
     This spider tries to crawl the urls of games played by a specific expert.
-    See samples/sample_game.json as an example of the result.
     """
 
     name = 'game'
-    start_urls = Extractor().extract(GLOBALS.EXPERT_JSON_LOCATION, "url")
+    start_urls = Extractor().extract(config.EXPERT_JSON_LOCATION, "url")
 
     def parse(self, response):
         for href in response.css("div.portlet table td:nth-child(3) a::attr(href)").getall():

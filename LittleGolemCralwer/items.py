@@ -21,4 +21,5 @@ class GameItem(scrapy.Item):
 
 class KifuItem(scrapy.Item):
     kifu = scrapy.Field()
+    game_result = scrapy.Field()
     url = scrapy.Field()

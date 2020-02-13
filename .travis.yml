@@ -9,7 +9,7 @@ install:
   - poetry install
 
 script:
-  - poetry run python -m pytest --cov=./
+  - poetry run python -m pytest --cov=./ --doctest-modules
   - ./ubuntu_setup.sh
   - scrapy crawl kifu -a playername=Lomaben -o results/Lomaben.json
   - python -m KifuAssembler.assemble -s=results/Lomaben.json
