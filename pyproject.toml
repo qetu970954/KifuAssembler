@@ -8,6 +8,7 @@ authors = ["Tzu-Yee <fdja1974.cs07g@nctu.edu.tw>"]
 python = "^3.6"
 scrapy = "^1.8.0"
 anytree = "^2.8.0"
+pytest-cov = "^2.8.1"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"
