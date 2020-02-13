@@ -25,13 +25,13 @@ def obtain_game_result(response):
     black_player_score, white_player_score = unicodedata.normalize("NFKD", black_player_score)[1], \
                                              unicodedata.normalize("NFKD", white_player_score)[1]
     if black_player_score == '2' and white_player_score == '0':
-        game_result = "BlackWin"
+        game_result = "BWin"
     elif black_player_score == '0' and white_player_score == '2':
-        game_result = "WhiteWin"
+        game_result = "WWin"
     elif black_player_score == '1' and white_player_score == '1':
         game_result = "Draw"
     else:
-        game_result = "Unknown"
+        game_result = "None"
     return game_result
 
 

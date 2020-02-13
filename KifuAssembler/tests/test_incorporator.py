@@ -2,7 +2,7 @@ from KifuAssembler.src.incorporator import Incorporator, KifuParser
 from KifuAssembler.src.data_types import Root, WhiteMove, BlackMove
 
 
-def test_Ctor_WithValidMoves_ReturnsCorrectPreOrderTraversalTuple():
+def test_Ctor_ReturnsCorrectPreOrderTraversalTuple():
     moves = [BlackMove(0, 0), WhiteMove(0, 1), BlackMove(0, 2), ]
 
     incorporator = Incorporator(moves)
@@ -17,7 +17,7 @@ def test_Ctor_WithValidMoves_ReturnsCorrectPreOrderTraversalTuple():
     assert type(actual) == tuple
 
 
-def test_Incorporate_DifferentMoves_ReturnsCorrectPreOrderTraversalTuple_0():
+def test_Incorporate_ReturnsCorrectPreOrderTraversalTuple_0():
     moves1 = [BlackMove(0, 0), WhiteMove(0, 1), BlackMove(0, 2), ]
     moves2 = [BlackMove(0, 0), WhiteMove(1, 1), BlackMove(0, 2), ]
 
@@ -33,7 +33,7 @@ def test_Incorporate_DifferentMoves_ReturnsCorrectPreOrderTraversalTuple_0():
     assert actual == expected
 
 
-def test_Incorporate_DifferentMoves_ReturnsCorrectPreOrderTraversalTuple_1():
+def test_Incorporate_ReturnsCorrectPreOrderTraversalTuple_1():
     moves1 = [BlackMove(0, 0), WhiteMove(0, 1), BlackMove(0, 2), ]
     moves2 = [BlackMove(1, 0), WhiteMove(1, 1), BlackMove(0, 2), ]
 
@@ -48,7 +48,7 @@ def test_Incorporate_DifferentMoves_ReturnsCorrectPreOrderTraversalTuple_1():
     assert actual == expected
 
 
-def test_Incorporate_DifferentMoves_ReturnsCorrectPreOrderTraversalTuple_2():
+def test_Incorporate_ReturnsCorrectPreOrderTraversalTuple_2():
     moves1 = [BlackMove(0, 0), WhiteMove(0, 1), BlackMove(0, 2), ]
     moves2 = [BlackMove(0, 0), WhiteMove(0, 2), BlackMove(0, 1), ]
     moves3 = [BlackMove(0, 0), WhiteMove(0, 2), BlackMove(0, 3), WhiteMove(0, 4), ]
@@ -66,7 +66,7 @@ def test_Incorporate_DifferentMoves_ReturnsCorrectPreOrderTraversalTuple_2():
     assert actual == expected
 
 
-def test_Incorporate_DifferentMoves_ReturnsCorrectPreOrderTraversalTuple_3():
+def test_Incorporate_ReturnsCorrectPreOrderTraversalTuple_3():
     moves1 = [BlackMove(0, 0), WhiteMove(0, 1), BlackMove(0, 2), ]
     moves2 = [BlackMove(0, 0), WhiteMove(0, 2), BlackMove(0, 1), ]
     moves3 = [BlackMove(0, 0), WhiteMove(0, 2), BlackMove(0, 3), WhiteMove(0, 4), ]
@@ -84,7 +84,7 @@ def test_Incorporate_DifferentMoves_ReturnsCorrectPreOrderTraversalTuple_3():
     assert actual == expected
 
 
-def test_Incorporate_Nothing_ReturnsCorrectPreOrderTraversalTuple():
+def test_Incorporate_ReturnsCorrectPreOrderTraversalTuple():
     incorporator = Incorporator()
     incorporator.incorporate([])
 
@@ -94,7 +94,7 @@ def test_Incorporate_Nothing_ReturnsCorrectPreOrderTraversalTuple():
     assert actual == expected
 
 
-def test_ToSgf_NormalCase_ReturnsCorrectSgf():
+def test_ToSgf_ReturnsCorrectSgf():
     moves1 = [BlackMove(9, 9), WhiteMove(8, 10), WhiteMove(10, 10), ]
     moves2 = [BlackMove(9, 9), WhiteMove(8, 8), WhiteMove(9, 10), ]
 
@@ -110,7 +110,7 @@ def test_ToSgf_NormalCase_ReturnsCorrectSgf():
     assert actual == expected
 
 
-def test_ToSgf_NormalCase_ReturnsCorrectSgf_2():
+def test_ToSgf_ReturnsCorrectSgf_2():
     moves1 = [BlackMove(9, 9), WhiteMove(8, 10), WhiteMove(10, 10), BlackMove(9, 10), BlackMove(9, 11)]
     moves2 = [BlackMove(9, 9), WhiteMove(8, 10), WhiteMove(10, 10), BlackMove(10, 9), BlackMove(11, 9)]
     moves3 = [BlackMove(9, 9), WhiteMove(8, 8), WhiteMove(9, 10), ]
@@ -131,7 +131,7 @@ def test_ToSgf_NormalCase_ReturnsCorrectSgf_2():
     assert actual == expected
 
 
-def test_ToSgf_NormalCase_ReturnsCorrectSgf_3():
+def test_ToSgf_ReturnsCorrectSgf_3():
     moves1 = [BlackMove(9, 9), WhiteMove(8, 10), WhiteMove(10, 10), BlackMove(9, 10), BlackMove(9, 11)]
     moves2 = [BlackMove(9, 9), WhiteMove(8, 10), WhiteMove(10, 10), BlackMove(10, 9), BlackMove(11, 9)]
     moves3 = [BlackMove(9, 9), ]
@@ -152,7 +152,7 @@ def test_ToSgf_NormalCase_ReturnsCorrectSgf_3():
     assert actual == expected
 
 
-def test_parse_Kifu_ReturnsCorrectMoveList():
+def test_parse_ReturnsCorrectMoveList():
     """
     The kifu is in smart game format
     :return:

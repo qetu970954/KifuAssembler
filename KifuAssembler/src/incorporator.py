@@ -2,7 +2,7 @@ from itertools import product
 
 from anytree import AnyNode, RenderTree, PreOrderIter
 
-from KifuAssembler.src.data_types import Root, WhiteMove, BlackMove
+from KifuAssembler.src.data_types import Root, WhiteMove, BlackMove, gogui_style_str
 
 
 class KifuParser:
@@ -149,3 +149,8 @@ class Incorporator:
     def print_tree(self):
         for pre, _, node in RenderTree(self.root):
             print(f"{pre}{node.data}")
+
+
+def to_GoGui_sgf(a_str):
+    moves = [gogui_style_str(mv) for mv in KifuParser.parse(a_str)][1:]
+    return "(;FF[4]CA[UTF-8]AP[GoGui:1.5.1];" + ";".join(moves) + ")"
