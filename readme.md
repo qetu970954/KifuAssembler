@@ -6,17 +6,15 @@
 
 **Crawls and Assembles historical Kifus of a specific Connect6 player**
 
-## Before you start
-This project use `pipenv` to manage the dependencies, however there are several ways to install `pipenv`.
-Please see https://docs.pipenv.org/en/latest/install/#installing-pipenv for installation.
 
 ## Clone and Setup 
-Clone the project and update pipenv:
+This project use [`poetry`](https://python-poetry.org/docs/managing-environments/) for dependency management.
+
 ```bash
 $ git clone https://github.com/qetu970954/KifuAssembler.git
 $ cd KifuAssembler
-$ pipenv update
-$ pipenv shell
+$ poetry update
+$ poetry shell
 ```
 
 Run setup script:

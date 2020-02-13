@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import scrapy
 
-import GLOBALS
+from LittleGolemCralwer.spiders import GLOBALS
 from KifuAssembler.extractor import Extractor
 from LittleGolemCralwer.items import KifuItem
 

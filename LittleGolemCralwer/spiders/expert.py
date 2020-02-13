@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import scrapy
 
-import GLOBALS
+from LittleGolemCralwer.spiders import GLOBALS
 from LittleGolemCralwer.items import ExpertItem
 
 

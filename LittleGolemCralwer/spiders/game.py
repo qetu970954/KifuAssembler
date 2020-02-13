@@ -2,7 +2,7 @@
 
 import scrapy
 
-import GLOBALS
+from LittleGolemCralwer.spiders import GLOBALS
 from LittleGolemCralwer.items import GameItem
 from KifuAssembler.extractor import Extractor
 

@@ -1,6 +1,6 @@
 import pytest
 
-import GLOBALS
+from LittleGolemCralwer.spiders import GLOBALS
 from KifuAssembler.extractor import FakeExtractor
 
 
