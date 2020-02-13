@@ -1,15 +1,15 @@
+# Assemble kifus inside the json files into a sgf tree
 import argparse
-import os
 
-from KifuAssembler.extractor import Extractor
-from KifuAssembler.incorporator import Incorporator, KifuParser
+from KifuAssembler.src.extractor import Extractor
+from KifuAssembler.src.incorporator import Incorporator, KifuParser
+
+parser = argparse.ArgumentParser(description="Assemble kifus to a kifu tree.")
+parser.add_argument('-s', '--json_src', type=str, help="The source json path to extract kifu from.")
+parser.add_argument('-o', '--output_file', type=str, help="The location to output merged tree.",
+    default="results/result.sgf")
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description="Assemble kifus to a kifu tree.")
-    parser.add_argument('-s', '--src_file_path', type=str, help="The source file path to extract kifu from.")
-    parser.add_argument('-o', '--output_file_path', type=str, help="The merged kifu's output path.",
-        default="results/result.sgf")
-
     args = parser.parse_args()
 
     kifus = Extractor().extract(args.src_file_path, "kifu")

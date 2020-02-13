@@ -4,7 +4,7 @@ import scrapy
 
 from LittleGolemCralwer.spiders import config
 from LittleGolemCralwer.items import GameItem
-from KifuAssembler.extractor import Extractor
+from KifuAssembler.src.extractor import Extractor
 
 
 class GamesSpider(scrapy.Spider):

@@ -2,7 +2,7 @@ from itertools import product
 
 from anytree import AnyNode, RenderTree, PreOrderIter
 
-from KifuAssembler.data_types import Root, WhiteMove, BlackMove
+from KifuAssembler.src.data_types import Root, WhiteMove, BlackMove
 
 
 class KifuParser:
@@ -58,7 +58,7 @@ class Incorporator:
     r"""
     An incorporator that can merge various game moves into a tree-like structure.
 
-    This class is used by assemble.py for assembling different kifus.
+    This class is used by json_to_tree.py for assembling different kifus.
 
     >>> moves = [BlackMove(10, 10), WhiteMove(0, 0), BlackMove(10, 11)]
     >>> incorporator = Incorporator(moves)

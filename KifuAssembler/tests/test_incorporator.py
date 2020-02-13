@@ -1,5 +1,5 @@
-from KifuAssembler.incorporator import Incorporator, KifuParser
-from KifuAssembler.data_types import Root, WhiteMove, BlackMove
+from KifuAssembler.src.incorporator import Incorporator, KifuParser
+from KifuAssembler.src.data_types import Root, WhiteMove, BlackMove
 
 
 def test_Ctor_WithValidMoves_ReturnsCorrectPreOrderTraversalTuple():

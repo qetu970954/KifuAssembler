@@ -1,7 +1,7 @@
 import pytest
 
 from LittleGolemCralwer.spiders import config
-from KifuAssembler.extractor import FakeExtractor
+from KifuAssembler.src.extractor import FakeExtractor
 
 
 def test_Extract_SmallJsonFile_ReturnListOfUrls():

@@ -2,7 +2,7 @@
 import scrapy
 import unicodedata
 from LittleGolemCralwer.spiders import config
-from KifuAssembler.extractor import Extractor
+from KifuAssembler.src.extractor import Extractor
 from LittleGolemCralwer.items import KifuItem
 
 
