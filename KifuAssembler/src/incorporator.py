@@ -1,3 +1,4 @@
+from collections import namedtuple
 from itertools import product
 
 from anytree import AnyNode, RenderTree, PreOrderIter
@@ -54,6 +55,43 @@ class KifuParser:
         return result
 
 
+def to_string(a_node: AnyNode):
+    result = str(a_node.data)
+
+    if a_node.urls and a_node.is_terminate_node:
+        result += f"C[Game urls   := "
+        result += ", ".join(a_node.urls)
+        result += "\n]"
+
+    if a_node.visit_cnt >= 2:
+        result += f"C[Visit Count := {a_node.visit_cnt}\n]"
+
+    if isinstance(a_node.data, BlackMove):
+        win_rate = format(
+            100 * ((a_node.bwin + a_node.draw / 2) / (
+                a_node.bwin + a_node.wwin + a_node.draw)),
+            '3.2f'
+        )
+        result += f"C[WinRate     := {win_rate}%\n]"
+        result += f"C[BWin count  := {a_node.bwin}\n]"
+        result += f"C[WWin count  := {a_node.wwin}\n]"
+        result += f"C[Draw count  := {a_node.draw}\n]"
+
+    elif isinstance(a_node.data, WhiteMove):
+        win_rate = format(
+            100 * ((a_node.wwin + a_node.draw / 2) / (
+                a_node.bwin + a_node.wwin + a_node.draw)),
+            '3.2f'
+        )
+        result += f"C[WinRate     := {win_rate}%\n]"
+        result += f"C[BWin count  := {a_node.bwin}\n]"
+        result += f"C[WWin count  := {a_node.wwin}\n]"
+        result += f"C[Draw count  := {a_node.draw}\n]"
+
+
+    return result
+
+
 class Incorporator:
     r"""
     An incorporator that can merge various game moves into a tree-like structure.
@@ -78,12 +116,16 @@ class Incorporator:
             └── B[kl]
     """
 
-    def __init__(self, moves=None, url="_sample_url_"):
-        self.root = AnyNode(data=Root(), visit_cnt=1, urls=[], is_terminate_node=False)
-        if moves:
-            self.incorporate(moves, url)
+    def __init__(self, moves=None, url="_sample_url_", game_results="Draw"):
+        self.root = AnyNode(data=Root(),
+            visit_cnt=1,
+            urls=[],
+            is_terminate_node=False)
 
-    def incorporate(self, moves: list, url="_sample_url_"):
+        if moves:
+            self.incorporate(moves, url, game_results)
+
+    def incorporate(self, moves: list, url="_sample_url_", game_results="Draw"):
         # Start from root node
         current_node = self.root
 
@@ -106,12 +148,22 @@ class Incorporator:
                     parent=current_node,
                     visit_cnt=1,
                     urls=[],
+                    bwin=0,
+                    wwin=0,
+                    draw=0,
                     is_terminate_node=False
                 )
 
             if len(moves) == 0:
                 current_node.urls.append(url)
                 current_node.is_terminate_node = True
+
+            if game_results == "BWin":
+                current_node.bwin += 1
+            elif game_results == "WWin":
+                current_node.wwin += 1
+            elif game_results == "Draw":
+                current_node.draw += 1
 
     def to_tuple(self):
         """Returns a pre-order tree traversal node sequence"""
@@ -121,15 +173,7 @@ class Incorporator:
         """Returns the tree in sgf format."""
 
         def depth_first_traversal(current_node, result):
-            result += str(current_node.data)
-
-            if current_node.urls and current_node.is_terminate_node:
-                result += f"C[Game urls   := "
-                result += ", ".join(current_node.urls)
-                result += "\n]"
-
-            if current_node.visit_cnt >= 2:
-                result += f"C[Visit Count := {current_node.visit_cnt}\n]"
+            result += to_string(current_node)
 
             for child in current_node.children:
                 if len(current_node.children) >= 2:

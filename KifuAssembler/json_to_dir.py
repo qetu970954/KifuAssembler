@@ -1,5 +1,8 @@
 import pathlib
 import argparse
+import time
+
+import tqdm
 
 from KifuAssembler.src.extractor import Extractor
 from KifuAssembler.src.incorporator import to_GoGui_sgf
@@ -17,6 +20,8 @@ if __name__ == '__main__':
     kifus = Extractor().extract(args.input_json, "kifu")
     game_results = Extractor().extract(args.input_json, "game_result")
 
-    for idx, (kifu, result) in enumerate(zip(kifus, game_results)):
-        with (p / pathlib.Path(f"{result}_{idx}.sgf")).open('w') as f:
-            f.write(to_GoGui_sgf(kifu))
+    with tqdm.tqdm(total=len(kifus)) as pbar:
+        for idx, (kifu, result) in enumerate(zip(kifus, game_results)):
+            with (p / pathlib.Path(f"{result}_{idx}.sgf")).open('w') as f:
+                f.write(to_GoGui_sgf(kifu))
+            pbar.update(1)

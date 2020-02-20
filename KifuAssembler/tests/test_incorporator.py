@@ -98,14 +98,23 @@ def test_ToSgf_ReturnsCorrectSgf():
     moves1 = [BlackMove(9, 9), WhiteMove(8, 10), WhiteMove(10, 10), ]
     moves2 = [BlackMove(9, 9), WhiteMove(8, 8), WhiteMove(9, 10), ]
 
-    incorporator = Incorporator(moves1)
-    incorporator.incorporate(moves2)
+    incorporator = Incorporator(moves1, "_sample_url_", "BWin")
+    incorporator.incorporate(moves2, "_sample_url_", "WWin")
 
     actual = incorporator.to_sgf()
-    expected = ("(;B[jj]C[Visit Count := 2\n"
-                "](;W[ik];W[kk]C[Game urls   := _sample_url_\n"
-                "])(;W[ii];W[jk]C[Game urls   := _sample_url_\n"
-                "]))")
+    expected = (
+        '''\
+(;B[jj]C[Visit Count := 2
+]C[WinRate     := 50.00%
+](;W[ik]C[WinRate     := 0.00%
+];W[kk]C[Game urls   := _sample_url_
+]C[WinRate     := 0.00%
+])(;W[ii]C[WinRate     := 100.00%
+];W[jk]C[Game urls   := _sample_url_
+]C[WinRate     := 100.00%
+]))\
+'''
+    )
 
     assert actual == expected
 
@@ -115,18 +124,30 @@ def test_ToSgf_ReturnsCorrectSgf_2():
     moves2 = [BlackMove(9, 9), WhiteMove(8, 10), WhiteMove(10, 10), BlackMove(10, 9), BlackMove(11, 9)]
     moves3 = [BlackMove(9, 9), WhiteMove(8, 8), WhiteMove(9, 10), ]
 
-    incorporator = Incorporator(moves1)
-    incorporator.incorporate(moves2)
-    incorporator.incorporate(moves3)
+    incorporator = Incorporator(moves1, "_sample_url_", "WWin")
+    incorporator.incorporate(moves2, "_sample_url_", "WWin")
+    incorporator.incorporate(moves3, "_sample_url_", "BWin")
 
     actual = incorporator.to_sgf()
-    expected = ("(;B[jj]C[Visit Count := 3\n"
-                "](;W[ik]C[Visit Count := 2\n"
-                "];W[kk]C[Visit Count := 2\n"
-                "](;B[jk];B[jl]C[Game urls   := _sample_url_\n"
-                "])(;B[kj];B[lj]C[Game urls   := _sample_url_\n"
-                "]))(;W[ii];W[jk]C[Game urls   := _sample_url_\n"
-                "]))")
+    expected = ('''\
+(;B[jj]C[Visit Count := 3
+]C[WinRate     := 33.33%
+](;W[ik]C[Visit Count := 2
+]C[WinRate     := 100.00%
+];W[kk]C[Visit Count := 2
+]C[WinRate     := 100.00%
+](;B[jk]C[WinRate     := 0.00%
+];B[jl]C[Game urls   := _sample_url_
+]C[WinRate     := 0.00%
+])(;B[kj]C[WinRate     := 0.00%
+];B[lj]C[Game urls   := _sample_url_
+]C[WinRate     := 0.00%
+]))(;W[ii]C[WinRate     := 0.00%
+];W[jk]C[Game urls   := _sample_url_
+]C[WinRate     := 0.00%
+]))\
+'''
+                )
 
     assert actual == expected
 
@@ -141,13 +162,22 @@ def test_ToSgf_ReturnsCorrectSgf_3():
     incorporator.incorporate(moves3)
 
     actual = incorporator.to_sgf()
-    expected = ("(;B[jj]C[Game urls   := _sample_url_\n"
-                "]C[Visit Count := 3\n"
-                "];W[ik]C[Visit Count := 2\n"
-                "];W[kk]C[Visit Count := 2\n"
-                "](;B[jk];B[jl]C[Game urls   := _sample_url_\n"
-                "])(;B[kj];B[lj]C[Game urls   := _sample_url_\n"
-                "]))")
+    expected = ('''\
+(;B[jj]C[Game urls   := _sample_url_
+]C[Visit Count := 3
+]C[WinRate     := 50.00%
+];W[ik]C[Visit Count := 2
+]C[WinRate     := 50.00%
+];W[kk]C[Visit Count := 2
+]C[WinRate     := 50.00%
+](;B[jk]C[WinRate     := 50.00%
+];B[jl]C[Game urls   := _sample_url_
+]C[WinRate     := 50.00%
+])(;B[kj]C[WinRate     := 50.00%
+];B[lj]C[Game urls   := _sample_url_
+]C[WinRate     := 50.00%
+]))\
+''')
 
     assert actual == expected
 
@@ -158,7 +188,7 @@ def test_parse_ReturnsCorrectMoveList():
     :return:
     """
     sample_kifu = "(;FF[4]EV[connect6.ch.26.1.1]PB[Phoenix]PW[Lomaben]SO[http://www.littlegolem.com];B[j10];W[j9l11];" \
-                 "B[k9l8];W[k10i11])"
+                  "B[k9l8];W[k10i11])"
 
     actual = KifuParser.parse(sample_kifu)
 
