@@ -106,12 +106,27 @@ def test_ToSgf_ReturnsCorrectSgf():
         '''\
 (;B[jj]C[Visit Count := 2
 ]C[WinRate     := 50.00%
+]C[BWin count  := 1
+]C[WWin count  := 1
+]C[Draw count  := 0
 ](;W[ik]C[WinRate     := 0.00%
+]C[BWin count  := 1
+]C[WWin count  := 0
+]C[Draw count  := 0
 ];W[kk]C[Game urls   := _sample_url_
 ]C[WinRate     := 0.00%
+]C[BWin count  := 1
+]C[WWin count  := 0
+]C[Draw count  := 0
 ])(;W[ii]C[WinRate     := 100.00%
+]C[BWin count  := 0
+]C[WWin count  := 1
+]C[Draw count  := 0
 ];W[jk]C[Game urls   := _sample_url_
 ]C[WinRate     := 100.00%
+]C[BWin count  := 0
+]C[WWin count  := 1
+]C[Draw count  := 0
 ]))\
 '''
     )
@@ -129,22 +144,50 @@ def test_ToSgf_ReturnsCorrectSgf_2():
     incorporator.incorporate(moves3, "_sample_url_", "BWin")
 
     actual = incorporator.to_sgf()
+
     expected = ('''\
 (;B[jj]C[Visit Count := 3
 ]C[WinRate     := 33.33%
+]C[BWin count  := 1
+]C[WWin count  := 2
+]C[Draw count  := 0
 ](;W[ik]C[Visit Count := 2
 ]C[WinRate     := 100.00%
+]C[BWin count  := 0
+]C[WWin count  := 2
+]C[Draw count  := 0
 ];W[kk]C[Visit Count := 2
 ]C[WinRate     := 100.00%
+]C[BWin count  := 0
+]C[WWin count  := 2
+]C[Draw count  := 0
 ](;B[jk]C[WinRate     := 0.00%
+]C[BWin count  := 0
+]C[WWin count  := 1
+]C[Draw count  := 0
 ];B[jl]C[Game urls   := _sample_url_
 ]C[WinRate     := 0.00%
+]C[BWin count  := 0
+]C[WWin count  := 1
+]C[Draw count  := 0
 ])(;B[kj]C[WinRate     := 0.00%
+]C[BWin count  := 0
+]C[WWin count  := 1
+]C[Draw count  := 0
 ];B[lj]C[Game urls   := _sample_url_
 ]C[WinRate     := 0.00%
+]C[BWin count  := 0
+]C[WWin count  := 1
+]C[Draw count  := 0
 ]))(;W[ii]C[WinRate     := 0.00%
+]C[BWin count  := 1
+]C[WWin count  := 0
+]C[Draw count  := 0
 ];W[jk]C[Game urls   := _sample_url_
 ]C[WinRate     := 0.00%
+]C[BWin count  := 1
+]C[WWin count  := 0
+]C[Draw count  := 0
 ]))\
 '''
                 )
@@ -166,16 +209,37 @@ def test_ToSgf_ReturnsCorrectSgf_3():
 (;B[jj]C[Game urls   := _sample_url_
 ]C[Visit Count := 3
 ]C[WinRate     := 50.00%
+]C[BWin count  := 0
+]C[WWin count  := 0
+]C[Draw count  := 3
 ];W[ik]C[Visit Count := 2
 ]C[WinRate     := 50.00%
+]C[BWin count  := 0
+]C[WWin count  := 0
+]C[Draw count  := 2
 ];W[kk]C[Visit Count := 2
 ]C[WinRate     := 50.00%
+]C[BWin count  := 0
+]C[WWin count  := 0
+]C[Draw count  := 2
 ](;B[jk]C[WinRate     := 50.00%
+]C[BWin count  := 0
+]C[WWin count  := 0
+]C[Draw count  := 1
 ];B[jl]C[Game urls   := _sample_url_
 ]C[WinRate     := 50.00%
+]C[BWin count  := 0
+]C[WWin count  := 0
+]C[Draw count  := 1
 ])(;B[kj]C[WinRate     := 50.00%
+]C[BWin count  := 0
+]C[WWin count  := 0
+]C[Draw count  := 1
 ];B[lj]C[Game urls   := _sample_url_
 ]C[WinRate     := 50.00%
+]C[BWin count  := 0
+]C[WWin count  := 0
+]C[Draw count  := 1
 ]))\
 ''')
 
