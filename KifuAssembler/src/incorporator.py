@@ -1,9 +1,10 @@
-from collections import namedtuple
 from itertools import product
 
 from anytree import AnyNode, RenderTree, PreOrderIter
 
-from KifuAssembler.src.data_types import Root, WhiteMove, BlackMove, gogui_style_str
+from KifuAssembler.src.utils import Root, WhiteMove, BlackMove, gogui_style_str, build_symmetric_lookup_table
+
+import copy
 
 
 class KifuParser:
@@ -88,7 +89,6 @@ def to_string(a_node: AnyNode):
         result += f"C[WWin count  := {a_node.wwin}\n]"
         result += f"C[Draw count  := {a_node.draw}\n]"
 
-
     return result
 
 
@@ -116,16 +116,23 @@ class Incorporator:
             └── B[kl]
     """
 
-    def __init__(self, moves=None, url="_sample_url_", game_results="Draw"):
+    def __init__(self, moves=None, url="_sample_url_", game_results="Draw", *, symmetric=False):
         self.root = AnyNode(data=Root(),
             visit_cnt=1,
             urls=[],
             is_terminate_node=False)
+        self.use_symmetric = symmetric
 
         if moves:
             self.incorporate(moves, url, game_results)
 
     def incorporate(self, moves: list, url="_sample_url_", game_results="Draw"):
+        if self.use_symmetric:
+            self._symmetrical_incorporate(moves, url, game_results)
+        else:
+            self._incorporate(moves, url, game_results)
+
+    def _incorporate(self, moves: list, url="_sample_url_", game_results="Draw"):
         # Start from root node
         current_node = self.root
 
@@ -164,6 +171,50 @@ class Incorporator:
                 current_node.wwin += 1
             elif game_results == "Draw":
                 current_node.draw += 1
+
+    def _symmetrical_incorporate(self, moves: list, url="_sample_url_", game_results="Draw"):
+        def find_idx_of_first_not_presented_move(moves):
+            node = self.root
+            i = 0
+            while i < len(moves):
+                children = [c for c in node.children if c.data == moves[i]]
+                if children:
+                    node = children[0]
+                    i += 1
+                else:
+                    break
+            return i
+
+        if not moves:
+            return
+
+        # We start by checking the first moves which is NOT presented on the tree
+        idx = find_idx_of_first_not_presented_move(moves)
+
+        # We merge the moves if they had already bundled in the tree
+        if idx == len(moves):
+            self._incorporate(moves, url, game_results)
+            return
+
+        # Otherwise, we take all of the possible 'symmetric moves', which are a list move moves that are symmetric
+        # to the original one, and then check if any of these moves completely shows on the tree
+        table = build_symmetric_lookup_table()
+        symmetric_moves_lists = []
+        for action in table[(moves[idx].i, moves[idx].j)]:
+            symmetric_moves_lists.append(
+                moves[0:idx] + [action(mv) for mv in moves[idx:]]
+            )
+        ...
+        for sym_mvs in symmetric_moves_lists:
+            if find_idx_of_first_not_presented_move(sym_mvs) == len(sym_mvs):
+                # Here, we see that one of the moves is completely on the tree,
+                # So we can attach it onto the tree
+                self._incorporate(sym_mvs, url, game_results)
+                return
+
+        # The control flow reaches here if NO symmetric moves are completely presented on the tree
+        # In that case, we took the last item in symmetric_moves_lists (which has the lowest index from others)
+        self._incorporate(symmetric_moves_lists[-1], url, game_results)
 
     def to_tuple(self):
         """Returns a pre-order tree traversal node sequence"""

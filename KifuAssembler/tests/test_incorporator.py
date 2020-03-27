@@ -1,5 +1,5 @@
 from KifuAssembler.src.incorporator import Incorporator, KifuParser
-from KifuAssembler.src.data_types import Root, WhiteMove, BlackMove
+from KifuAssembler.src.utils import Root, WhiteMove, BlackMove
 
 
 def test_Ctor_ReturnsCorrectPreOrderTraversalTuple():
@@ -263,5 +263,44 @@ def test_parse_ReturnsCorrectMoveList():
                 BlackMove(11, 7),
                 WhiteMove(10, 9),
                 WhiteMove(8, 10), ]
+
+    assert actual == expected
+
+
+def test_SymmetricalIncorporate_ReturnsCorrectPreOrderTraversalTuple_0():
+    moves2 = [BlackMove(0, 0), WhiteMove(1, 2), BlackMove(3, 3), ]
+    moves1 = [BlackMove(0, 0), WhiteMove(2, 1), BlackMove(0, 2), ]
+
+    incorporator = Incorporator(moves1, symmetric=True)
+    incorporator.incorporate(moves2)
+
+    actual = incorporator.to_tuple()
+    expected = (Root(),
+                BlackMove(0, 0),
+                WhiteMove(2, 1),
+                BlackMove(0, 2),
+                BlackMove(3, 3),)
+
+    assert actual == expected
+
+
+def test_SymmetricalIncorporate_ReturnsCorrectPreOrderTraversalTuple_1():
+    moves1 = [BlackMove(0, 0), WhiteMove(2, 1), BlackMove(0, 2)]
+    moves2 = [BlackMove(0, 18), WhiteMove(1, 16), BlackMove(2, 18), ]  # Rotate 90%
+    moves3 = [BlackMove(18, 18), WhiteMove(16, 17), BlackMove(18, 16), ]  # Rotate 180%
+    moves4 = [BlackMove(18, 0), WhiteMove(17, 2), BlackMove(16, 0), ]  # Rotate 270%
+    moves5 = [BlackMove(0, 18), WhiteMove(2, 17), BlackMove(0, 16), ]  # Horizontal reflection
+
+    incorporator = Incorporator(moves1, symmetric=True)
+    incorporator.incorporate(moves2)
+    incorporator.incorporate(moves3)
+    incorporator.incorporate(moves4)
+    incorporator.incorporate(moves5)
+
+    actual = incorporator.to_tuple()
+    expected = (Root(),
+                BlackMove(0, 0),
+                WhiteMove(2, 1),
+                BlackMove(0, 2),)
 
     assert actual == expected

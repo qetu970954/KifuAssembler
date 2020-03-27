@@ -25,7 +25,7 @@ $ ./windows_setup.cmd   # On Windows
 $ ./ubuntu_setup.sh    # On Ubuntu
 ```
 This should generates `expert.json` and `game.json` in the `results/` directory,
-and some crawled information are stored inside these file.
+and some crawled information are stored inside these files.
 
 ### Crawl !!
 Let scrapy crawl the kifu for `$PlayerName` and store the result to `$OutputFile` 

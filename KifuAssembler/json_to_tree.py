@@ -7,8 +7,8 @@ from KifuAssembler.src.incorporator import Incorporator, KifuParser
 
 parser = argparse.ArgumentParser(description="Assemble kifus to a kifu tree.")
 parser.add_argument('json_src', type=str, help="The source json path to extract kifu from.")
-parser.add_argument('output_file', type=str, help="The location to output merged tree.",
-    default="results/result.sgf")
+parser.add_argument('output_file', type=str, help="The location to output merged tree.", default="results/result.sgf")
+parser.add_argument('--symmetric', action='store_false', help="Rotation merge?")
 
 if __name__ == '__main__':
     args = parser.parse_args()
@@ -17,7 +17,10 @@ if __name__ == '__main__':
     urls = Extractor().extract(args.json_src, "url")
     game_results = Extractor().extract(args.json_src, "game_result")
 
-    incorporator = Incorporator()
+    if args.symmetric:
+        incorporator = Incorporator(symmetric=True)
+    else:
+        incorporator = Incorporator()
 
     with tqdm.tqdm(total=len(kifus)) as pbar:
         for kifu, url, game_results in zip(kifus, urls, game_results):
