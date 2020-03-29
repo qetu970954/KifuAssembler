@@ -1,4 +1,5 @@
 from itertools import product
+from operator import attrgetter
 
 from anytree import AnyNode, RenderTree, PreOrderIter
 
@@ -200,21 +201,24 @@ class Incorporator:
         # to the original one, and then check if any of these moves completely shows on the tree
         table = build_symmetric_lookup_table()
         symmetric_moves_lists = []
+        if moves[idx].i == 9 and moves[idx].j == 9:
+            if idx+1 < len(moves):
+                idx += 1
+
         for action in table[(moves[idx].i, moves[idx].j)]:
-            symmetric_moves_lists.append(
-                moves[0:idx] + [action(mv) for mv in moves[idx:]]
-            )
-        ...
-        for sym_mvs in symmetric_moves_lists:
+            symmetric_moves_lists.append(moves[0:idx] + [action(mv) for mv in moves[idx:]])
+
+        for idx, sym_mvs in enumerate(symmetric_moves_lists):
             if find_idx_of_first_not_presented_move(sym_mvs) == len(sym_mvs):
                 # Here, we see that one of the moves is completely on the tree,
-                # So we can attach it onto the tree
+                # So we can just simply attach it
                 self._incorporate(sym_mvs, url, game_results)
                 return
 
+
         # The control flow reaches here if NO symmetric moves are completely presented on the tree
         # In that case, we took the last item in symmetric_moves_lists (which has the lowest index from others)
-        self._incorporate(symmetric_moves_lists[-1], url, game_results)
+        self._incorporate(symmetric_moves_lists[0], url, game_results)
 
     def to_tuple(self):
         """Returns a pre-order tree traversal node sequence"""

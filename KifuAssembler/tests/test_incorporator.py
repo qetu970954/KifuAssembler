@@ -304,3 +304,16 @@ def test_SymmetricalIncorporate_ReturnsCorrectPreOrderTraversalTuple_1():
                 BlackMove(0, 2),)
 
     assert actual == expected
+
+def test_SymmetricalIncorporate_C6_2():
+    moves1 = [BlackMove(9, 9), WhiteMove(10, 10), WhiteMove(10, 8), ]
+    moves2 = [BlackMove(9, 9), WhiteMove(10, 8), WhiteMove(10, 10), ]
+
+    incorporator = Incorporator(moves1, symmetric=True)
+    incorporator.incorporate(moves2)
+
+    actual = incorporator.to_tuple()
+    expected = (Root(),
+                BlackMove(9, 9), WhiteMove(8, 8), WhiteMove(10, 8),)
+
+    assert actual == expected
