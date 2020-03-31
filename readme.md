@@ -30,11 +30,11 @@ and some crawled information are stored inside these files.
 ### Crawl !!
 Let scrapy crawl the kifu for `$PlayerName` and store the result to `$OutputFile` 
 ```
-$ scrapy crawl kifu -a playername=<PlayerName> -o <OutputFile> 
+$ scrapy crawl kifu -a player_name=<PlayerName> -o <OutputFile> 
 ```
 e.g.:
 ```shell
-$ scrapy crawl kifu -a playername=Lomaben -o results/Lomaben.json
+$ scrapy crawl kifu -a player_name=Lomaben -o results/Lomaben.json
 ```
 This spider internally looks for `results/game.json` and use it's content, so you must make sure that file exist before you run this.
 

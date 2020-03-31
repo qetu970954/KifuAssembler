@@ -12,7 +12,7 @@ class Root:
     """
 
     def __eq__(self, other):
-        return isinstance(other, self.__class__) and self.__dict__ == other.__dict__
+        return True
 
     def __str__(self) -> str:
         return ""
@@ -32,7 +32,7 @@ class BlackMove:
         self.visit_cnt = visit_cnt
 
     def __eq__(self, other):
-        return other and self.i == other.i and self.j == other.j
+        return self.i == other.i and self.j == other.j
 
     def __ne__(self, other):
         return not self.__eq__(other)
@@ -40,8 +40,19 @@ class BlackMove:
     def __str__(self) -> str:
         return f"B[{'abcdefghijklmnopqrs'[self.i]}{'abcdefghijklmnopqrs'[self.j]}]"
 
+    def __repr__(self):
+        return 'BlackMove(x={}, y={})'.format(self.i, self.j)
+
     def __hash__(self):
         return hash((self.i, self.j))
+
+    def __lt__(self, other):
+        if self.i - self.j >= 0 and other.i - other.j < 0:
+            return True
+        if self.i - self.j < 0 and other.i - other.j >= 0:
+            return False
+        if self.i - self.j >= 0 and other.i - other.j >= 0:
+            return (self.i, self.j) < (other.i, other.j)
 
 
 class WhiteMove:
@@ -58,7 +69,7 @@ class WhiteMove:
         self.visit_cnt = visit_cnt
 
     def __eq__(self, other):
-        return other and self.i == other.i and self.j == other.j
+        return self.i == other.i and self.j == other.j
 
     def __ne__(self, other):
         return not self.__eq__(other)
@@ -66,8 +77,19 @@ class WhiteMove:
     def __str__(self) -> str:
         return f"W[{'abcdefghijklmnopqrs'[self.i]}{'abcdefghijklmnopqrs'[self.j]}]"
 
+    def __repr__(self):
+        return 'WhiteMove(x={}, y={})'.format(self.i, self.j)
+
     def __hash__(self):
         return hash((self.i, self.j))
+
+    def __lt__(self, other):
+        if self.i - self.j >= 0 and other.i - other.j < 0:
+            return True
+        if self.i - self.j < 0 and other.i - other.j >= 0:
+            return False
+        if self.i - self.j >= 0 and other.i - other.j >= 0:
+            return (self.i, self.j) < (other.i, other.j)
 
 
 def gogui_style_str(move):

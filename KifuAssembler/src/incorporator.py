@@ -1,5 +1,6 @@
 from itertools import product
-from operator import attrgetter
+from operator import attrgetter, itemgetter
+from typing import TextIO
 
 from anytree import AnyNode, RenderTree, PreOrderIter
 
@@ -58,26 +59,23 @@ class KifuParser:
 
 
 def to_string(a_node: AnyNode):
+    if isinstance(a_node.data, Root):
+        return ""
+
     result = str(a_node.data)
-
-    if a_node.urls and a_node.is_terminate_node:
-        result += f"C[Game urls   := "
-        result += ", ".join(a_node.urls)
-        result += "\n]"
-
+    result += "C["
     if a_node.visit_cnt >= 2:
-        result += f"C[Visit Count := {a_node.visit_cnt}\n]"
-
+        result += f"Visit Count = {a_node.visit_cnt}\n"
+    result += f"BWin count  = {a_node.bwin}\n"
+    result += f"WWin count  = {a_node.wwin}\n"
+    result += f"Draw count  = {a_node.draw}\n"
     if isinstance(a_node.data, BlackMove):
         win_rate = format(
             100 * ((a_node.bwin + a_node.draw / 2) / (
                 a_node.bwin + a_node.wwin + a_node.draw)),
             '3.2f'
         )
-        result += f"C[WinRate     := {win_rate}%\n]"
-        result += f"C[BWin count  := {a_node.bwin}\n]"
-        result += f"C[WWin count  := {a_node.wwin}\n]"
-        result += f"C[Draw count  := {a_node.draw}\n]"
+        result += f"WinRate     = {win_rate}%\n"
 
     elif isinstance(a_node.data, WhiteMove):
         win_rate = format(
@@ -85,11 +83,12 @@ def to_string(a_node: AnyNode):
                 a_node.bwin + a_node.wwin + a_node.draw)),
             '3.2f'
         )
-        result += f"C[WinRate     := {win_rate}%\n]"
-        result += f"C[BWin count  := {a_node.bwin}\n]"
-        result += f"C[WWin count  := {a_node.wwin}\n]"
-        result += f"C[Draw count  := {a_node.draw}\n]"
+        result += f"WinRate     = {win_rate}%\n"
 
+    if a_node.urls and a_node.is_terminate_node:
+        result += f"Game urls   = "
+        result += ", ".join(a_node.urls)
+    result += "]"
     return result
 
 
@@ -118,10 +117,16 @@ class Incorporator:
     """
 
     def __init__(self, moves=None, url="_sample_url_", game_results="Draw", *, symmetric=False):
-        self.root = AnyNode(data=Root(),
-            visit_cnt=1,
+        self.root = AnyNode(
+            data=Root(),
+            parent=None,
+            visit_cnt=0,
             urls=[],
-            is_terminate_node=False)
+            bwin=0,
+            wwin=0,
+            draw=0,
+            is_terminate_node=False
+        )
         self.use_symmetric = symmetric
 
         if moves:
@@ -197,57 +202,57 @@ class Incorporator:
             self._incorporate(moves, url, game_results)
             return
 
-        # Otherwise, we take all of the possible 'symmetric moves', which are a list move moves that are symmetric
+        # Otherwise, we take all of the possible 'symmetric moves', which are a list of moves that are symmetric
         # to the original one, and then check if any of these moves completely shows on the tree
         table = build_symmetric_lookup_table()
-        symmetric_moves_lists = []
-        if moves[idx].i == 9 and moves[idx].j == 9:
-            if idx+1 < len(moves):
-                idx += 1
 
+        symmetric_moves_lists = []
         for action in table[(moves[idx].i, moves[idx].j)]:
             symmetric_moves_lists.append(moves[0:idx] + [action(mv) for mv in moves[idx:]])
 
-        for idx, sym_mvs in enumerate(symmetric_moves_lists):
+        if idx + 1 < len(moves):
+            symmetric_moves_lists = sorted(symmetric_moves_lists, key=itemgetter(idx + 1))
+
+        for sym_mvs in symmetric_moves_lists:
             if find_idx_of_first_not_presented_move(sym_mvs) == len(sym_mvs):
                 # Here, we see that one of the moves is completely on the tree,
                 # So we can just simply attach it
                 self._incorporate(sym_mvs, url, game_results)
                 return
 
-
         # The control flow reaches here if NO symmetric moves are completely presented on the tree
-        # In that case, we took the last item in symmetric_moves_lists (which has the lowest index from others)
+        # In that case, we took the item in symmetric_moves_lists (which has the lowest index from others)
         self._incorporate(symmetric_moves_lists[0], url, game_results)
 
     def to_tuple(self):
         """Returns a pre-order tree traversal node sequence"""
-        return tuple(node.data for node in PreOrderIter(self.root))
-
-    def to_sgf(self):
-        """Returns the tree in sgf format."""
-
-        def depth_first_traversal(current_node, result):
-            result += to_string(current_node)
-
-            for child in current_node.children:
-                if len(current_node.children) >= 2:
-                    result += "(;"
-                else:
-                    result += ";"
-
-                result = depth_first_traversal(child, result)
-
-                if len(current_node.children) >= 2:
-                    result += ")"
-
-            return result
-
-        return "(" + depth_first_traversal(self.root, "") + ")"
+        return copy.deepcopy(tuple(node.data for node in PreOrderIter(self.root)))
 
     def print_tree(self):
         for pre, _, node in RenderTree(self.root):
             print(f"{pre}{node.data}")
+
+
+def dump_to(an_Incorporator: Incorporator, file: TextIO):
+    """Dump the content in an incorporator to a file (in sgf format)."""
+
+    def depth_first_traversal(current_node, file: TextIO):
+        file.write(to_string(current_node))
+
+        for child in current_node.children:
+            if len(current_node.children) >= 2:
+                file.write("(;")
+            else:
+                file.write(";")
+
+            depth_first_traversal(child, file)
+
+            if len(current_node.children) >= 2:
+                file.write(")")
+
+    file.write("(")
+    depth_first_traversal(an_Incorporator.root, file)
+    file.write(")")
 
 
 def to_GoGui_sgf(a_str):
