@@ -346,11 +346,9 @@ def test_SymmetricalIncorporate_ReturnsCorrectPreOrderTraversalTuple_4():
                 BlackMove(9, 3),
                 BlackMove(10, 3),
 
-                BlackMove(11, 7),
-                BlackMove(12, 6),
-                WhiteMove(11, 15),
-                WhiteMove(12, 15),
-                BlackMove(9, 15),
-                BlackMove(8, 15),)
+                WhiteMove(15, 11),
+                WhiteMove(15, 12),
+                BlackMove(15, 9),
+                BlackMove(15, 8))
 
     assert actual == expected

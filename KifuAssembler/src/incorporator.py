@@ -179,7 +179,7 @@ class Incorporator:
                 current_node.draw += 1
 
     def _symmetrical_incorporate(self, moves: list, url="_sample_url_", game_results="Draw"):
-        def find_idx_of_first_not_presented_move(moves):
+        def find_idx_of_the_first_not_presented_move(moves):
             node = self.root
             i = 0
             while i < len(moves):
@@ -191,38 +191,35 @@ class Incorporator:
                     break
             return i
 
-        if not moves:
+        if len(moves) == 0:
             return
 
         # We start by checking the first moves which is NOT presented on the tree
-        idx = find_idx_of_first_not_presented_move(moves)
+        idx = find_idx_of_the_first_not_presented_move(moves)
 
-        # We merge the moves if they had already bundled in the tree
         if idx == len(moves):
+            # Entire moves are inside the tree, just simply incorporate it
             self._incorporate(moves, url, game_results)
             return
 
-        # Otherwise, we take all of the possible 'symmetric moves', which are a list of moves that are symmetric
-        # to the original one, and then check if any of these moves completely shows on the tree
+        # Otherwise, we calculate all of the possible 'symmetric moves', which are a list of moves that are symmetric
+        # to the original moves
         table = build_symmetric_lookup_table()
-
         symmetric_moves_lists = []
         for action in table[(moves[idx].i, moves[idx].j)]:
             symmetric_moves_lists.append(moves[0:idx] + [action(mv) for mv in moves[idx:]])
 
+        # We prefer moves in the lower-left corner(i<9, j<9, and i >= j), thus we sorted the lists.
         if idx + 1 < len(moves):
             symmetric_moves_lists = sorted(symmetric_moves_lists, key=itemgetter(idx + 1))
 
-        for sym_mvs in symmetric_moves_lists:
-            if find_idx_of_first_not_presented_move(sym_mvs) == len(sym_mvs):
-                # Here, we see that one of the moves is completely on the tree,
-                # So we can just simply attach it
-                self._incorporate(sym_mvs, url, game_results)
-                return
-
-        # The control flow reaches here if NO symmetric moves are completely presented on the tree
-        # In that case, we took the item in symmetric_moves_lists (which has the lowest index from others)
-        self._incorporate(symmetric_moves_lists[0], url, game_results)
+        # Finally, we find one of the symmetric moves that maximize the similarity of moves inside the tree.
+        # The 'similarity' is calculated by finding the first index of move that does not show on tree.
+        # The higher the index is, the more similarity it holds.
+        self._incorporate(
+            max(symmetric_moves_lists, key=lambda sym_mvs: find_idx_of_the_first_not_presented_move(sym_mvs)),
+            url, game_results
+        )
 
     def to_tuple(self):
         """Returns a pre-order tree traversal node sequence"""
