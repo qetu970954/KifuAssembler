@@ -1,5 +1,9 @@
 # Helper script to grab multiple sgf files inside a directory and put them into a single json file.
 # (so it can be "assembled" into a merged sgf)
+# Note that the game outcome is determined by filename.
+# I.e., If the filename ends with BlackWin, the generated json will mark it BWin
+#       If the filename ends with WhiteWin, the generated json will mark it WWin
+
 import pathlib
 import argparse
 import json
@@ -22,9 +26,10 @@ if __name__ == '__main__':
                 text = sgf.read_text()[:37]
                 text += ";B[jj]"
                 text += sgf.read_text()[37:]
-                if sgf.name[-12: -4] == "BlackWin":
+
+                if sgf.stem[-8:0] == "BlackWin":
                     result.append({"kifu": text, "url": "", "game_result": "BWin"})
-                elif sgf.name[-12: -4] == "WhiteWin":
+                elif sgf.stem[-8:0] == "WhiteWin":
                     result.append({"kifu": text, "url": "", "game_result": "WWin"})
             else:
                 result.append({"kifu": sgf.read_text(), "url": "", "game_result": "None"})

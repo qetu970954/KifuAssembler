@@ -341,6 +341,7 @@ def test_SymmetricalIncorporate_ReturnsCorrectPreOrderTraversalTuple_4():
                 WhiteMove(6, 6),
                 BlackMove(7, 11),
                 BlackMove(6, 12),
+
                 WhiteMove(7, 3),
                 WhiteMove(6, 3),
                 BlackMove(9, 3),
