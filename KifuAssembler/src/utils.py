@@ -17,6 +17,9 @@ class Root:
     def __str__(self) -> str:
         return ""
 
+    def __repr__(self):
+        return 'Root()'
+
 
 class BlackMove:
     """
@@ -41,18 +44,18 @@ class BlackMove:
         return f"B[{'abcdefghijklmnopqrs'[self.i]}{'abcdefghijklmnopqrs'[self.j]}]"
 
     def __repr__(self):
-        return 'BlackMove(x={}, y={})'.format(self.i, self.j)
+        return f"BlackMove(x={self.i}, y={self.j})"
 
     def __hash__(self):
         return hash((self.i, self.j))
 
     def __lt__(self, other):
-        if self.i - self.j >= 0 and other.i - other.j < 0:
+        if self.i + self.j < other.i + other.j:
             return True
-        if self.i - self.j < 0 and other.i - other.j >= 0:
+        elif self.i + self.j == other.i + other.j:
+            return self.i < other.i
+        else:
             return False
-        if self.i - self.j >= 0 and other.i - other.j >= 0:
-            return (self.i, self.j) < (other.i, other.j)
 
 
 class WhiteMove:
@@ -78,18 +81,18 @@ class WhiteMove:
         return f"W[{'abcdefghijklmnopqrs'[self.i]}{'abcdefghijklmnopqrs'[self.j]}]"
 
     def __repr__(self):
-        return 'WhiteMove(x={}, y={})'.format(self.i, self.j)
+        return f"WhiteMove(x={self.i}, y={self.j})"
 
     def __hash__(self):
         return hash((self.i, self.j))
 
     def __lt__(self, other):
-        if self.i - self.j >= 0 and other.i - other.j < 0:
+        if self.i + self.j < other.i + other.j:
             return True
-        if self.i - self.j < 0 and other.i - other.j >= 0:
+        elif self.i + self.j == other.i + other.j:
+            return self.i < other.i
+        else:
             return False
-        if self.i - self.j >= 0 and other.i - other.j >= 0:
-            return (self.i, self.j) < (other.i, other.j)
 
 
 def gogui_style_str(move):
@@ -176,3 +179,15 @@ def build_symmetric_lookup_table():
             symmetric_lookup[(new_bm.i, new_bm.j)].append(do_nothing)
 
     return symmetric_lookup
+
+
+def all_possible_actions() -> list:
+    return [do_nothing,
+            rotate_90,
+            rotate_180,
+            rotate_270,
+            horizontal_reflect,
+            horizontal_reflect_rotate_90,
+            horizontal_reflect_rotate_180,
+            horizontal_reflect_rotate_270, ]
+

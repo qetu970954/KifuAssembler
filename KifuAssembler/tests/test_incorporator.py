@@ -269,14 +269,14 @@ def test_SymmetricalIncorporate_ReturnsCorrectPreOrderTraversalTuple_0():
     moves1 = [BlackMove(0, 0), WhiteMove(2, 1), BlackMove(0, 2), ]
     moves2 = [BlackMove(0, 0), WhiteMove(1, 2), BlackMove(3, 3), ]
 
-    incorporator = Incorporator(moves1, symmetric=True)
+    incorporator = Incorporator(moves1, merge_symmetric_moves=True)
     incorporator.incorporate(moves2)
 
     actual = incorporator.to_tuple()
     expected = (Root(),
                 BlackMove(0, 0),
-                WhiteMove(2, 1),
-                BlackMove(0, 2),
+                WhiteMove(1, 2),
+                BlackMove(2, 0),
                 BlackMove(3, 3),)
 
     assert actual == expected
@@ -289,7 +289,7 @@ def test_SymmetricalIncorporate_ReturnsCorrectPreOrderTraversalTuple_1():
     moves4 = [BlackMove(18, 0), WhiteMove(17, 2), BlackMove(16, 0), ]  # Rotate 270%
     moves5 = [BlackMove(0, 18), WhiteMove(2, 17), BlackMove(0, 16), ]  # Horizontal reflection
 
-    incorporator = Incorporator(moves1, symmetric=True)
+    incorporator = Incorporator(moves1, merge_symmetric_moves=True)
     incorporator.incorporate(moves2)
     incorporator.incorporate(moves3)
     incorporator.incorporate(moves4)
@@ -298,8 +298,8 @@ def test_SymmetricalIncorporate_ReturnsCorrectPreOrderTraversalTuple_1():
     actual = incorporator.to_tuple()
     expected = (Root(),
                 BlackMove(0, 0),
-                WhiteMove(2, 1),
-                BlackMove(0, 2),)
+                WhiteMove(1, 2),
+                BlackMove(2, 0),)
 
     assert actual == expected
 
@@ -308,17 +308,17 @@ def test_SymmetricalIncorporate_ReturnsCorrectPreOrderTraversalTuple_3():
     moves1 = [BlackMove(9, 9), WhiteMove(10, 10), WhiteMove(10, 8), ]
     moves2 = [BlackMove(9, 9), WhiteMove(10, 8), WhiteMove(10, 10), ]
 
-    incorporator = Incorporator(moves1, symmetric=True)
+    incorporator = Incorporator(moves1, merge_symmetric_moves=True)
     incorporator.incorporate(moves2)
 
     actual = incorporator.to_tuple()
     expected = (Root(),
-                BlackMove(9, 9), WhiteMove(8, 8), WhiteMove(10, 8),)
+                BlackMove(9, 9), WhiteMove(8, 8), WhiteMove(8, 10),)
 
     assert actual == expected
 
 
-def test_SymmetricalIncorporate_ReturnsCorrectPreOrderTraversalTuple_4():
+def test_IncorporateWithC6FlagEnabled_ReturnsCorrectResult_0():
     moves1 = [BlackMove(9, 9),
               WhiteMove(11, 7), WhiteMove(12, 6),
               BlackMove(11, 11), BlackMove(12, 12),
@@ -331,25 +331,115 @@ def test_SymmetricalIncorporate_ReturnsCorrectPreOrderTraversalTuple_4():
               WhiteMove(11, 3), WhiteMove(12, 3),
               BlackMove(9, 3), BlackMove(8, 3)]
 
-    incorporator = Incorporator(moves1, symmetric=True)
+    incorporator = Incorporator(moves1, merge_symmetric_moves=True, use_c6_merge_rules=True)
     incorporator.incorporate(moves2)
-
-    actual = incorporator.to_tuple()
     expected = (Root(),
                 BlackMove(9, 9),
-                WhiteMove(7, 7),
                 WhiteMove(6, 6),
-                BlackMove(7, 11),
+                WhiteMove(7, 7),
                 BlackMove(6, 12),
+                BlackMove(7, 11),
 
-                WhiteMove(7, 3),
                 WhiteMove(6, 3),
+                WhiteMove(7, 3),
                 BlackMove(9, 3),
                 BlackMove(10, 3),
 
                 WhiteMove(15, 11),
                 WhiteMove(15, 12),
-                BlackMove(15, 9),
-                BlackMove(15, 8))
+                BlackMove(15, 8),
+                BlackMove(15, 9))
 
+    actual = incorporator.to_tuple()
+
+    assert actual == expected
+
+
+def test_IncorporateWithC6FlagEnabled_ReturnsCorrectResult_1():
+    moves1 = [BlackMove(9, 9),
+              WhiteMove(9, 8), WhiteMove(8, 8)]
+
+    moves2 = [BlackMove(9, 9),
+              WhiteMove(10, 9), WhiteMove(10, 10)]
+
+    incorporator = Incorporator(moves1, merge_symmetric_moves=True, use_c6_merge_rules=True)
+    incorporator.incorporate(moves2)
+    actual = incorporator.to_tuple()
+    expected = (Root(),
+                BlackMove(9, 9),
+                WhiteMove(8, 8),
+                WhiteMove(8, 9),)
+
+    assert actual == expected
+
+
+def test_IncorporateWithC6FlagEnabled_ReturnsCorrectResult_2():
+    moves1 = [BlackMove(9, 9),
+              WhiteMove(8, 8), WhiteMove(10, 9)]
+
+    moves2 = [BlackMove(9, 9),
+              WhiteMove(9, 8), WhiteMove(8, 10)]
+
+    incorporator = Incorporator(moves1, merge_symmetric_moves=True, use_c6_merge_rules=True)
+    incorporator.incorporate(moves2)
+    actual = incorporator.to_tuple()
+    expected = (Root(),
+                BlackMove(9, 9),
+                WhiteMove(8, 8),
+                WhiteMove(9, 10),)
+
+    assert actual == expected
+
+
+def test_IncorporateWithC6FlagEnabled_ReturnsCorrectResult_3():
+    moves1 = [BlackMove(9, 9),
+              WhiteMove(8, 8), WhiteMove(9, 7)]
+
+    moves2 = [BlackMove(9, 9),
+              WhiteMove(9, 7), WhiteMove(8, 8)]
+
+    incorporator = Incorporator(moves1, merge_symmetric_moves=True, use_c6_merge_rules=True)
+    incorporator.incorporate(moves2)
+    actual = incorporator.to_tuple()
+    expected = (Root(),
+                BlackMove(9, 9),
+                WhiteMove(7, 9),
+                WhiteMove(8, 8),)
+
+    assert actual == expected
+
+
+def test_IncorporateWithC6FlagEnabled_ReturnsCorrectResult_4():
+    moves1 = [BlackMove(9, 9),
+              WhiteMove(7, 9), WhiteMove(8, 8), BlackMove(6, 6), BlackMove(7, 7)]
+
+    moves2 = [BlackMove(9, 9),
+              WhiteMove(8, 8), WhiteMove(7, 9), BlackMove(7, 7), BlackMove(6, 6)]
+
+    incorporator = Incorporator(moves1, merge_symmetric_moves=True, use_c6_merge_rules=True)
+    incorporator.incorporate(moves2)
+    actual = incorporator.to_tuple()
+    expected = (Root(),
+                BlackMove(9, 9),
+                WhiteMove(7, 9),
+                WhiteMove(8, 8),
+                BlackMove(6, 6),
+                BlackMove(7, 7))
+
+    assert actual == expected
+
+
+def test_IncorporateWithC6FlagEnabled_ReturnsCorrectResult_5():
+    moves1 = [BlackMove(9, 9), WhiteMove(7, 9), WhiteMove(8, 8), BlackMove(8, 7)]
+    moves2 = [BlackMove(9, 9), WhiteMove(8, 8), WhiteMove(9, 7), BlackMove(7, 8)]
+    moves2 = [BlackMove(9, 9), WhiteMove(8, 8), WhiteMove(7, 9), BlackMove(8, 7)]
+    incorporator = Incorporator(moves1, merge_symmetric_moves=True, use_c6_merge_rules=True)
+    incorporator.incorporate(moves2)
+
+    actual = incorporator.to_tuple()
+    expected = (Root(),
+                BlackMove(9, 9),
+                WhiteMove(7, 9),
+                WhiteMove(8, 8),
+                BlackMove(8, 7),)
     assert actual == expected

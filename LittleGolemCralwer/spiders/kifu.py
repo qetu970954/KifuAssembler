@@ -45,14 +45,9 @@ class KifuSpider(scrapy.Spider):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         if not getattr(self, 'player_name', ''):
-            if not getattr(self, 'expert_json', ''):
-                print("ERROR! Please specify player name in the command line argument (see readme)")
-                raise AttributeError
-            else:
-                experts = Extractor().extract(self.expert_json, 'player')
-                for player in experts:
-                    self.start_urls += generate_start_urls(player)
-
+            experts = Extractor().extract(config.EXPERT_JSON_LOCATION, 'player')
+            for player in experts:
+                self.start_urls += generate_start_urls(player)
         else:
             self.start_urls = generate_start_urls(self.player_name)
 

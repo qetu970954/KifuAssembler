@@ -1,7 +1,5 @@
 import pathlib
 import argparse
-import time
-
 import tqdm
 
 from KifuAssembler.src.extractor import Extractor

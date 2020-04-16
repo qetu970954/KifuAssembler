@@ -1,11 +1,10 @@
 from itertools import product
-from operator import attrgetter, itemgetter
 from typing import TextIO
 
 from anytree import AnyNode, RenderTree, PreOrderIter
 
-from KifuAssembler.src.utils import Root, WhiteMove, BlackMove, gogui_style_str, build_symmetric_lookup_table
-
+from KifuAssembler.src.utils import Root, WhiteMove, BlackMove, gogui_style_str, build_symmetric_lookup_table, \
+    all_possible_actions
 import copy
 
 
@@ -92,31 +91,42 @@ def to_string(a_node: AnyNode):
     return result
 
 
+def normalize(moves):
+    r"""
+    Normalize a sequence of moves, so that moves with smaller idx will always appear before larger one.
+
+    This is useful to merge moves in connect6, where two same-color moves with different order are consider the same.
+
+    # WhiteMove(9, 8) has bigger index than WhiteMove(8, 8), so they are swapped.
+    >>> normalize( [BlackMove(9, 9), WhiteMove(9, 8), WhiteMove(8, 8)] )
+    [BlackMove(x=9, y=9), WhiteMove(x=8, y=8), WhiteMove(x=9, y=8)]
+    >>> normalize( [BlackMove(9, 9), WhiteMove(8, 8), WhiteMove(9, 8)] )
+    [BlackMove(x=9, y=9), WhiteMove(x=8, y=8), WhiteMove(x=9, y=8)]
+
+    # WhiteMove(9, 8) has bigger index than WhiteMove(8, 8), so they are swapped.
+    >>> normalize( [BlackMove(9, 9), WhiteMove(1, 1), WhiteMove(8, 8)] )
+    [BlackMove(x=9, y=9), WhiteMove(x=1, y=1), WhiteMove(x=8, y=8)]
+
+    """
+    result = []
+    for mv in moves:
+        if len(result) >= 1 and type(result[-1]) == type(mv):
+            if result[-1] > mv:
+                result[-1], mv = mv, result[-1]
+        result.append(mv)
+    return result
+
+
 class Incorporator:
     r"""
     An incorporator that can merge various game moves into a tree-like structure.
 
     This class is used by json_to_tree.py for assembling different kifus.
-
-    >>> moves = [BlackMove(10, 10), WhiteMove(0, 0), BlackMove(10, 11)]
-    >>> incorporator = Incorporator(moves)
-    >>> incorporator.print_tree()
-    <BLANKLINE>
-    └── B[kk]
-        └── W[aa]
-            └── B[kl]
-    >>> moves2 = [BlackMove(10, 10), WhiteMove(1, 1), BlackMove(10, 11)]
-    >>> incorporator.incorporate(moves2)
-    >>> incorporator.print_tree()
-    <BLANKLINE>
-    └── B[kk]
-        ├── W[aa]
-        │   └── B[kl]
-        └── W[bb]
-            └── B[kl]
     """
 
-    def __init__(self, moves=None, url="_sample_url_", game_results="Draw", *, symmetric=False):
+    def __init__(self, moves=None, url="_sample_url_", game_results="Draw", *,
+                 merge_symmetric_moves=False,
+                 use_c6_merge_rules=False):
         self.root = AnyNode(
             data=Root(),
             parent=None,
@@ -127,13 +137,15 @@ class Incorporator:
             draw=0,
             is_terminate_node=False
         )
-        self.use_symmetric = symmetric
+
+        self.merge_symmetric_moves = merge_symmetric_moves
+        self.use_c6_merge_rules = use_c6_merge_rules
 
         if moves:
             self.incorporate(moves, url, game_results)
 
     def incorporate(self, moves: list, url="_sample_url_", game_results="Draw"):
-        if self.use_symmetric:
+        if self.merge_symmetric_moves:
             self._symmetrical_incorporate(moves, url, game_results)
         else:
             self._incorporate(moves, url, game_results)
@@ -151,7 +163,7 @@ class Incorporator:
             if results:
                 # If such child exists, replace `current_node` to that child
                 # This makes us walk to the deeper tree node to search for the first never-seen moves
-                current_node = results[0]
+                current_node = min(results)
                 current_node.visit_cnt += 1
 
             else:
@@ -185,7 +197,7 @@ class Incorporator:
             while i < len(moves):
                 children = [c for c in node.children if c.data == moves[i]]
                 if children:
-                    node = children[0]
+                    node = min(children)
                     i += 1
                 else:
                     break
@@ -195,39 +207,36 @@ class Incorporator:
             return
 
         # We start by checking the first moves which is NOT presented on the tree
-        idx = find_idx_of_the_first_not_presented_move(moves)
+        idx1, idx2 = find_idx_of_the_first_not_presented_move(moves), \
+                     find_idx_of_the_first_not_presented_move(normalize(moves))
 
-        if idx == len(moves):
-            # Entire moves are inside the tree, just simply incorporate it
-            self._incorporate(moves, url, game_results)
-            return
-
-        # Otherwise, we calculate all of the possible 'symmetric moves', which are a list of moves that are symmetric
-        # to the original moves
-        table = build_symmetric_lookup_table()
+        # we calculate all of 'symmetric moves', which are a list of moves that are symmetric to original.
         symmetric_moves_lists = []
-        for action in table[(moves[idx].i, moves[idx].j)]:
-            symmetric_moves_lists.append(moves[0:idx] + [action(mv) for mv in moves[idx:]])
+        if self.use_c6_merge_rules:
+            for action in all_possible_actions():
+                sym_mvs = moves[0:idx1] + [action(mv) for mv in moves[idx1:]]
+                symmetric_moves_lists.append(sym_mvs)
+                symmetric_moves_lists.append(normalize(sym_mvs))
+                sym_mvs = moves[0:idx2] + [action(mv) for mv in moves[idx2:]]
+                symmetric_moves_lists.append(sym_mvs)
+                symmetric_moves_lists.append(normalize(sym_mvs))
+        else:
+            table = build_symmetric_lookup_table()
+            for action in table[(moves[idx1].i, moves[idx1].j)]:
+                sym_mvs = moves[0:idx1] + [action(mv) for mv in moves[idx1:]]
+                symmetric_moves_lists.append(sym_mvs)
 
-        # We prefer moves in the lower-left corner(i<9, j<9, and i >= j), thus we sorted the lists.
-        if idx + 1 < len(moves):
-            symmetric_moves_lists = sorted(symmetric_moves_lists, key=itemgetter(idx + 1))
-
-        # Finally, we find one of the symmetric moves that maximize the similarity of moves inside the tree.
+        # Then, we find one of the symmetric moves that maximize the similarity of moves inside the tree.
         # The 'similarity' is calculated by finding the first index of move that does not show on tree.
         # The higher the index is, the more similarity it holds.
+        mvs = min(symmetric_moves_lists, key=lambda mvs: (-find_idx_of_the_first_not_presented_move(mvs), mvs))
         self._incorporate(
-            max(symmetric_moves_lists, key=lambda sym_mvs: find_idx_of_the_first_not_presented_move(sym_mvs)),
-            url, game_results
+            normalize(mvs), url, game_results
         )
 
     def to_tuple(self):
         """Returns a pre-order tree traversal node sequence"""
         return copy.deepcopy(tuple(node.data for node in PreOrderIter(self.root)))
-
-    def print_tree(self):
-        for pre, _, node in RenderTree(self.root):
-            print(f"{pre}{node.data}")
 
 
 def dump_to(an_Incorporator: Incorporator, file: TextIO):
