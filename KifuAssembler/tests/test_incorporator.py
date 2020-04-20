@@ -85,7 +85,7 @@ def test_Incorporate_ReturnsCorrectPreOrderTraversalTuple_3():
     assert actual == expected
 
 
-def test_Incorporate_ReturnsCorrectPreOrderTraversalTuple():
+def test_Incorporate_ReturnsCorrectPreOrderTraversalTuple_4():
     incorporator = Incorporator()
     incorporator.incorporate([])
 
@@ -95,7 +95,7 @@ def test_Incorporate_ReturnsCorrectPreOrderTraversalTuple():
     assert actual == expected
 
 
-def test_DumpTo_ReturnsCorrectSgf():
+def test_DumpTo_ReturnsCorrectSgf_0():
     moves1 = [BlackMove(9, 9), WhiteMove(8, 10), WhiteMove(10, 10), ]
     moves2 = [BlackMove(9, 9), WhiteMove(8, 8), WhiteMove(9, 10), ]
 
@@ -135,7 +135,7 @@ Game urls   = _sample_url_]))\
     assert actual == expected
 
 
-def test_DumpTo_ReturnsCorrectSgf_2():
+def test_DumpTo_ReturnsCorrectSgf_1():
     moves1 = [BlackMove(9, 9), WhiteMove(8, 10), WhiteMove(10, 10), BlackMove(9, 10), BlackMove(9, 11)]
     moves2 = [BlackMove(9, 9), WhiteMove(8, 10), WhiteMove(10, 10), BlackMove(10, 9), BlackMove(11, 9)]
     moves3 = [BlackMove(9, 9), WhiteMove(8, 8), WhiteMove(9, 10), ]
@@ -193,7 +193,7 @@ Game urls   = _sample_url_]))\
     assert actual == expected
 
 
-def test_DumpTo_ReturnsCorrectSgf_3():
+def test_DumpTo_ReturnsCorrectSgf_2():
     moves1 = [BlackMove(9, 9), WhiteMove(8, 10), WhiteMove(10, 10), BlackMove(9, 10), BlackMove(9, 11)]
     moves2 = [BlackMove(9, 9), WhiteMove(8, 10), WhiteMove(10, 10), BlackMove(10, 9), BlackMove(11, 9)]
     moves3 = [BlackMove(9, 9), ]
@@ -304,11 +304,11 @@ def test_SymmetricalIncorporate_ReturnsCorrectPreOrderTraversalTuple_1():
     assert actual == expected
 
 
-def test_SymmetricalIncorporate_ReturnsCorrectPreOrderTraversalTuple_3():
+def test_IncorporateWithC6FlagEnabled_ReturnsCorrectTuple_0():
     moves1 = [BlackMove(9, 9), WhiteMove(10, 10), WhiteMove(10, 8), ]
     moves2 = [BlackMove(9, 9), WhiteMove(10, 8), WhiteMove(10, 10), ]
 
-    incorporator = Incorporator(moves1, merge_symmetric_moves=True)
+    incorporator = Incorporator(moves1, merge_symmetric_moves=True, use_c6_merge_rules=True)
     incorporator.incorporate(moves2)
 
     actual = incorporator.to_tuple()
@@ -318,7 +318,7 @@ def test_SymmetricalIncorporate_ReturnsCorrectPreOrderTraversalTuple_3():
     assert actual == expected
 
 
-def test_IncorporateWithC6FlagEnabled_ReturnsCorrectResult_0():
+def test_IncorporateWithC6FlagEnabled_ReturnsCorrectTuple_1():
     moves1 = [BlackMove(9, 9),
               WhiteMove(11, 7), WhiteMove(12, 6),
               BlackMove(11, 11), BlackMove(12, 12),
@@ -355,7 +355,7 @@ def test_IncorporateWithC6FlagEnabled_ReturnsCorrectResult_0():
     assert actual == expected
 
 
-def test_IncorporateWithC6FlagEnabled_ReturnsCorrectResult_1():
+def test_IncorporateWithC6FlagEnabled_ReturnsCorrectTuple_2():
     moves1 = [BlackMove(9, 9),
               WhiteMove(9, 8), WhiteMove(8, 8)]
 
@@ -373,7 +373,7 @@ def test_IncorporateWithC6FlagEnabled_ReturnsCorrectResult_1():
     assert actual == expected
 
 
-def test_IncorporateWithC6FlagEnabled_ReturnsCorrectResult_2():
+def test_IncorporateWithC6FlagEnabled_ReturnsCorrectTuple_3():
     moves1 = [BlackMove(9, 9),
               WhiteMove(8, 8), WhiteMove(10, 9)]
 
@@ -391,7 +391,7 @@ def test_IncorporateWithC6FlagEnabled_ReturnsCorrectResult_2():
     assert actual == expected
 
 
-def test_IncorporateWithC6FlagEnabled_ReturnsCorrectResult_3():
+def test_IncorporateWithC6FlagEnabled_ReturnsCorrectTuple_4():
     moves1 = [BlackMove(9, 9),
               WhiteMove(8, 8), WhiteMove(9, 7)]
 
@@ -409,7 +409,7 @@ def test_IncorporateWithC6FlagEnabled_ReturnsCorrectResult_3():
     assert actual == expected
 
 
-def test_IncorporateWithC6FlagEnabled_ReturnsCorrectResult_4():
+def test_IncorporateWithC6FlagEnabled_ReturnsCorrectTuple_5():
     moves1 = [BlackMove(9, 9),
               WhiteMove(7, 9), WhiteMove(8, 8), BlackMove(6, 6), BlackMove(7, 7)]
 
@@ -429,9 +429,8 @@ def test_IncorporateWithC6FlagEnabled_ReturnsCorrectResult_4():
     assert actual == expected
 
 
-def test_IncorporateWithC6FlagEnabled_ReturnsCorrectResult_5():
+def test_IncorporateWithC6FlagEnabled_ReturnsCorrectTuple_6():
     moves1 = [BlackMove(9, 9), WhiteMove(7, 9), WhiteMove(8, 8), BlackMove(8, 7)]
-    moves2 = [BlackMove(9, 9), WhiteMove(8, 8), WhiteMove(9, 7), BlackMove(7, 8)]
     moves2 = [BlackMove(9, 9), WhiteMove(8, 8), WhiteMove(7, 9), BlackMove(8, 7)]
     incorporator = Incorporator(moves1, merge_symmetric_moves=True, use_c6_merge_rules=True)
     incorporator.incorporate(moves2)

@@ -91,22 +91,19 @@ def to_string(a_node: AnyNode):
     return result
 
 
-def normalize(moves):
+def rearrange(moves):
     r"""
-    Normalize a sequence of moves, so that moves with smaller idx will always appear before larger one.
+    Rearrange a sequence of moves, so that moves with smaller idx will always appear before larger one.
 
     This is useful to merge moves in connect6, where two same-color moves with different order are consider the same.
 
     # WhiteMove(9, 8) has bigger index than WhiteMove(8, 8), so they are swapped.
-    >>> normalize( [BlackMove(9, 9), WhiteMove(9, 8), WhiteMove(8, 8)] )
+    >>> rearrange( [BlackMove(9, 9), WhiteMove(9, 8), WhiteMove(8, 8)] )
     [BlackMove(x=9, y=9), WhiteMove(x=8, y=8), WhiteMove(x=9, y=8)]
-    >>> normalize( [BlackMove(9, 9), WhiteMove(8, 8), WhiteMove(9, 8)] )
+    >>> rearrange( [BlackMove(9, 9), WhiteMove(8, 8), WhiteMove(9, 8)] )
     [BlackMove(x=9, y=9), WhiteMove(x=8, y=8), WhiteMove(x=9, y=8)]
-
-    # WhiteMove(9, 8) has bigger index than WhiteMove(8, 8), so they are swapped.
-    >>> normalize( [BlackMove(9, 9), WhiteMove(1, 1), WhiteMove(8, 8)] )
+    >>> rearrange( [BlackMove(9, 9), WhiteMove(1, 1), WhiteMove(8, 8)] )
     [BlackMove(x=9, y=9), WhiteMove(x=1, y=1), WhiteMove(x=8, y=8)]
-
     """
     result = []
     for mv in moves:
@@ -206,33 +203,38 @@ class Incorporator:
         if len(moves) == 0:
             return
 
-        # We start by checking the first moves which is NOT presented on the tree
-        idx1, idx2 = find_idx_of_the_first_not_presented_move(moves), \
-                     find_idx_of_the_first_not_presented_move(normalize(moves))
+        # Start checks the first moves which is NOT presented on the tree
+        idx1 = find_idx_of_the_first_not_presented_move(moves)
 
-        # we calculate all of 'symmetric moves', which are a list of moves that are symmetric to original.
         symmetric_moves_lists = []
         if self.use_c6_merge_rules:
+            # Get all possible symmetrical moves, including rearranged
             for action in all_possible_actions():
                 sym_mvs = moves[0:idx1] + [action(mv) for mv in moves[idx1:]]
                 symmetric_moves_lists.append(sym_mvs)
-                symmetric_moves_lists.append(normalize(sym_mvs))
-                sym_mvs = moves[0:idx2] + [action(mv) for mv in moves[idx2:]]
-                symmetric_moves_lists.append(sym_mvs)
-                symmetric_moves_lists.append(normalize(sym_mvs))
+                symmetric_moves_lists.append(rearrange(sym_mvs))
+
+            # Find one of the symmetric moves that maximize the similarity of moves inside the tree.
+            # The 'similarity' is calculated by finding the first index of move that does not show on the tree.
+            # The higher the index is, the more similarity it gets.
+            mvs = min(symmetric_moves_lists, key=lambda mvs: (-find_idx_of_the_first_not_presented_move(mvs), mvs))
+
+            # Merge the result with moves rearranged
+            self._incorporate(
+                rearrange(mvs), url, game_results
+            )
+
         else:
             table = build_symmetric_lookup_table()
             for action in table[(moves[idx1].i, moves[idx1].j)]:
                 sym_mvs = moves[0:idx1] + [action(mv) for mv in moves[idx1:]]
                 symmetric_moves_lists.append(sym_mvs)
 
-        # Then, we find one of the symmetric moves that maximize the similarity of moves inside the tree.
-        # The 'similarity' is calculated by finding the first index of move that does not show on tree.
-        # The higher the index is, the more similarity it holds.
-        mvs = min(symmetric_moves_lists, key=lambda mvs: (-find_idx_of_the_first_not_presented_move(mvs), mvs))
-        self._incorporate(
-            normalize(mvs), url, game_results
-        )
+            mvs = max(symmetric_moves_lists, key=lambda mvs: find_idx_of_the_first_not_presented_move(mvs))
+            self._incorporate(
+                mvs, url, game_results
+            )
+
 
     def to_tuple(self):
         """Returns a pre-order tree traversal node sequence"""
