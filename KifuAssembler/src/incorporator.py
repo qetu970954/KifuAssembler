@@ -190,28 +190,30 @@ class Incorporator:
     def _symmetrical_incorporate(self, moves: list, url="_sample_url_", game_results="Draw"):
         def find_idx_of_the_first_not_presented_move(moves):
             node = self.root
-            i = 0
-            while i < len(moves):
-                children = [c for c in node.children if c.data == moves[i]]
+            depth, ans = 0, 0
+            while depth < len(moves):
+                children = [c for c in node.children if c.data == moves[depth]]
                 if children:
-                    node = min(children)
-                    i += 1
+                    chosen_child = min(children)
+                    depth += 1
+                    if depth % 2 == 1:
+                        ans += 1
+                    node = chosen_child
                 else:
                     break
-            return i
+            return ans
 
         if len(moves) == 0:
             return
 
         # Start checks the first moves which is NOT presented on the tree
-        idx1 = find_idx_of_the_first_not_presented_move(moves)
+        idx1 = find_idx_of_the_first_not_presented_move(rearrange(moves))
 
         symmetric_moves_lists = []
         if self.use_c6_merge_rules:
             # Get all possible symmetrical moves, including rearranged
             for action in all_possible_actions():
                 sym_mvs = moves[0:idx1] + [action(mv) for mv in moves[idx1:]]
-                symmetric_moves_lists.append(sym_mvs)
                 symmetric_moves_lists.append(rearrange(sym_mvs))
 
             # Find one of the symmetric moves that maximize the similarity of moves inside the tree.
