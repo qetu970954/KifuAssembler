@@ -443,19 +443,3 @@ def test_IncorporateWithC6FlagEnabled_ReturnsCorrectTuple_6():
                 BlackMove(8, 7),)
     assert actual == expected
 
-
-# def test_IncorporateWithC6FlagEnabled_ReturnsCorrectTuple_7():
-#     # moves1 = [BlackMove(9, 9), WhiteMove(7, 8), WhiteMove(9, 8),
-#     # moves2 = [BlackMove(9, 9), WhiteMove(8, 9), WhiteMove(8, 7), BlackMove(8, 10), BlackMove(9, 11)]
-#     # incorporator.incorporate(moves2)
-#
-#     s = "(;FF[4]EV[connect6.in.DEFAULT.238]PB[gzero_bot]PW[Michail]SO[http://www.littlegolem.com];B[j10];W[j11l11];B[i11h10];W[h12i10];B[g8g9];W[f8g7];B[f12g11];W[i9e13];B[e11d10];W[g13f10];B[d11f11];W[h11c11];B[f9e10];W[c12h7];B[d9c8];W[h13b7];B[d13c9])"
-#     moves = KifuParser.parse(s)
-#     incorporator = Incorporator(moves, merge_symmetric_moves=True, use_c6_merge_rules=True)
-#
-#     actual = incorporator.to_tuple()
-#     expected = (Root(),
-#                 BlackMove(9, 9),
-#                 WhiteMove(7, 8),
-#                 WhiteMove(9, 8),)
-#     assert actual == expected

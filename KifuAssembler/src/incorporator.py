@@ -188,26 +188,32 @@ class Incorporator:
                 current_node.draw += 1
 
     def _symmetrical_incorporate(self, moves: list, url="_sample_url_", game_results="Draw"):
-        def find_idx_of_the_first_not_presented_move(moves):
+        def find_idx_of_the_first_not_presented_move(moves, count_by_turn=False):
             node = self.root
-            depth, ans = 0, 0
+            depth, turns = 0, 0
             while depth < len(moves):
                 children = [c for c in node.children if c.data == moves[depth]]
                 if children:
                     chosen_child = min(children)
                     depth += 1
                     if depth % 2 == 1:
-                        ans += 1
+                        turns += 1
                     node = chosen_child
                 else:
                     break
-            return ans
+
+            return turns if count_by_turn else depth
+
 
         if len(moves) == 0:
             return
 
         # Start checks the first moves which is NOT presented on the tree
-        idx1 = find_idx_of_the_first_not_presented_move(rearrange(moves))
+        if self.use_c6_merge_rules:
+            idx1 = find_idx_of_the_first_not_presented_move(rearrange(moves), count_by_turn=True)
+        else:
+            idx1 = find_idx_of_the_first_not_presented_move(rearrange(moves))
+
 
         symmetric_moves_lists = []
         if self.use_c6_merge_rules:
