@@ -2,8 +2,9 @@
 Node-Type
 """
 import copy
-from collections import defaultdict
+from collections import defaultdict, namedtuple
 
+GAME_CONFIG = namedtuple("CONNECT_GAME_CONFIG", ['m', 'n', 'k', 'p', 'q'])(19, 19, 6, 1, 2)
 
 class Root:
     """
@@ -190,4 +191,3 @@ def all_possible_actions() -> list:
             horizontal_reflect_rotate_90,
             horizontal_reflect_rotate_180,
             horizontal_reflect_rotate_270, ]
-

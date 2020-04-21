@@ -1,10 +1,10 @@
 from itertools import product
 from typing import TextIO
 
-from anytree import AnyNode, RenderTree, PreOrderIter
+from anytree import AnyNode, PreOrderIter
 
 from KifuAssembler.src.utils import Root, WhiteMove, BlackMove, gogui_style_str, build_symmetric_lookup_table, \
-    all_possible_actions
+    all_possible_actions, GAME_CONFIG
 import copy
 
 
@@ -57,7 +57,7 @@ class KifuParser:
         return result
 
 
-def to_string(a_node: AnyNode):
+def detailed_str(a_node: AnyNode):
     if isinstance(a_node.data, Root):
         return ""
 
@@ -188,32 +188,31 @@ class Incorporator:
                 current_node.draw += 1
 
     def _symmetrical_incorporate(self, moves: list, url="_sample_url_", game_results="Draw"):
-        def find_idx_of_the_first_not_presented_move(moves, count_by_turn=False):
-            node = self.root
-            depth, turns = 0, 0
-            while depth < len(moves):
-                children = [c for c in node.children if c.data == moves[depth]]
+        def find_game_turns_that_is_not_present_on_the_tree(mvs):
+            current_node = self.root
+            idx, turns = 0, 0
+
+            while idx < len(mvs):
+                children = [c for c in current_node.children if c.data == mvs[idx]]
                 if children:
                     chosen_child = min(children)
-                    depth += 1
-                    if depth % 2 == 1:
+                    idx += 1
+                    if (idx - GAME_CONFIG.p) % GAME_CONFIG.q == 0:
                         turns += 1
-                    node = chosen_child
+                    current_node = chosen_child
                 else:
                     break
 
-            return turns if count_by_turn else depth
-
+            return turns
 
         if len(moves) == 0:
             return
 
         # Start checks the first moves which is NOT presented on the tree
         if self.use_c6_merge_rules:
-            idx1 = find_idx_of_the_first_not_presented_move(rearrange(moves), count_by_turn=True)
+            idx1 = find_game_turns_that_is_not_present_on_the_tree(rearrange(moves))
         else:
-            idx1 = find_idx_of_the_first_not_presented_move(rearrange(moves))
-
+            idx1 = find_game_turns_that_is_not_present_on_the_tree(rearrange(moves))
 
         symmetric_moves_lists = []
         if self.use_c6_merge_rules:
@@ -225,7 +224,8 @@ class Incorporator:
             # Find one of the symmetric moves that maximize the similarity of moves inside the tree.
             # The 'similarity' is calculated by finding the first index of move that does not show on the tree.
             # The higher the index is, the more similarity it gets.
-            mvs = min(symmetric_moves_lists, key=lambda mvs: (-find_idx_of_the_first_not_presented_move(mvs), mvs))
+            mvs = min(symmetric_moves_lists,
+                key=lambda mvs: (-find_game_turns_that_is_not_present_on_the_tree(mvs), mvs))
 
             # Merge the result with moves rearranged
             self._incorporate(
@@ -238,7 +238,7 @@ class Incorporator:
                 sym_mvs = moves[0:idx1] + [action(mv) for mv in moves[idx1:]]
                 symmetric_moves_lists.append(sym_mvs)
 
-            mvs = max(symmetric_moves_lists, key=lambda mvs: find_idx_of_the_first_not_presented_move(mvs))
+            mvs = max(symmetric_moves_lists, key=lambda mvs: find_game_turns_that_is_not_present_on_the_tree(mvs))
             self._incorporate(
                 mvs, url, game_results
             )
@@ -249,11 +249,11 @@ class Incorporator:
         return copy.deepcopy(tuple(node.data for node in PreOrderIter(self.root)))
 
 
-def dump_to(an_Incorporator: Incorporator, file: TextIO):
+def dump_to(an_Incorporator: Incorporator, file: TextIO, *, editor_style):
     """Dump the content in an incorporator to a file (in sgf format)."""
 
-    def depth_first_traversal(current_node, file: TextIO):
-        file.write(to_string(current_node))
+    def simple_tree_traverse(current_node, file: TextIO):
+        file.write(detailed_str(current_node))
 
         for child in current_node.children:
             if len(current_node.children) >= 2:
@@ -261,13 +261,38 @@ def dump_to(an_Incorporator: Incorporator, file: TextIO):
             else:
                 file.write(";")
 
-            depth_first_traversal(child, file)
+            simple_tree_traverse(child, file)
 
             if len(current_node.children) >= 2:
                 file.write(")")
 
-    file.write("(")
-    depth_first_traversal(an_Incorporator.root, file)
+    def is_end_of_turn(d):
+        if d == GAME_CONFIG.p:
+            return True
+        elif d > GAME_CONFIG.p and (d - GAME_CONFIG.p) % GAME_CONFIG.q == 0:
+            return True
+        else:
+            return False
+
+    def editor_style_tree_traverse(current_node: AnyNode, depth: int, branch_flag: bool, buffer: str, file: TextIO):
+        depth += 1
+        if is_end_of_turn(depth):
+            for child in current_node.children:
+                if branch_flag: file.write("(")
+                file.write(f"{buffer};{detailed_str(child)}")
+                editor_style_tree_traverse(child, depth, len(child.children) > 1, "", file)
+                if branch_flag: file.write(")")
+
+        else:
+            for child in current_node.children:
+                child_branch_flag = branch_flag or len(child.children) > 1
+                editor_style_tree_traverse(child, depth, child_branch_flag, buffer + ";" + detailed_str(child), file)
+
+    file.write("(;GM[511]")
+    if editor_style:
+        editor_style_tree_traverse(an_Incorporator.root, 0, len(an_Incorporator.root.children) > 1, "", file)
+    else:
+        simple_tree_traverse(an_Incorporator.root, file)
     file.write(")")
 
 

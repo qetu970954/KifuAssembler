@@ -65,4 +65,4 @@ if __name__ == '__main__':
 
     print(f"Writing to file '{args.output_file}'...>")
     with open(args.output_file, "w") as f:
-        dump_to(incorporator, f)
+        dump_to(incorporator, f, editor_style=args.c6)
