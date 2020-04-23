@@ -58,9 +58,6 @@ class KifuParser:
 
 
 def detailed_str(a_node: AnyNode):
-    if isinstance(a_node.data, Root):
-        return ""
-
     result = str(a_node.data)
     result += "C["
     if a_node.visit_cnt >= 2:
@@ -71,7 +68,7 @@ def detailed_str(a_node: AnyNode):
     if isinstance(a_node.data, BlackMove):
         win_rate = format(
             100 * ((a_node.bwin + a_node.draw / 2) / (
-                a_node.bwin + a_node.wwin + a_node.draw)),
+                    a_node.bwin + a_node.wwin + a_node.draw)),
             '3.2f'
         )
         result += f"WinRate     = {win_rate}%\n"
@@ -79,7 +76,7 @@ def detailed_str(a_node: AnyNode):
     elif isinstance(a_node.data, WhiteMove):
         win_rate = format(
             100 * ((a_node.wwin + a_node.draw / 2) / (
-                a_node.bwin + a_node.wwin + a_node.draw)),
+                    a_node.bwin + a_node.wwin + a_node.draw)),
             '3.2f'
         )
         result += f"WinRate     = {win_rate}%\n"
@@ -121,8 +118,7 @@ class Incorporator:
     This class is used by json_to_tree.py for assembling different kifus.
     """
 
-    def __init__(self, moves=None, url="_sample_url_", game_results="Draw", *,
-                 merge_symmetric_moves=False,
+    def __init__(self, moves=None, url="_sample_url_", *, game_results="Draw", merge_symmetric_moves=False,
                  use_c6_merge_rules=False):
         self.root = AnyNode(
             data=Root(),
@@ -151,30 +147,8 @@ class Incorporator:
         # Start from root node
         current_node = self.root
 
-        while moves:
-            current_mv = moves.pop(0)
-
-            # Find the child from current_node which's content is identical to current_mv
-            results = [c for c in current_node.children if c.data == current_mv]
-
-            if results:
-                # If such child exists, replace `current_node` to that child
-                # This makes us walk to the deeper tree node to search for the first never-seen moves
-                current_node = min(results)
-                current_node.visit_cnt += 1
-
-            else:
-                # Otherwise, attach a new node to the tree
-                current_node = AnyNode(
-                    data=current_mv,
-                    parent=current_node,
-                    visit_cnt=1,
-                    urls=[],
-                    bwin=0,
-                    wwin=0,
-                    draw=0,
-                    is_terminate_node=False
-                )
+        while True:
+            current_node.visit_cnt += 1
 
             if len(moves) == 0:
                 current_node.urls.append(url)
@@ -186,6 +160,31 @@ class Incorporator:
                 current_node.wwin += 1
             elif game_results == "Draw":
                 current_node.draw += 1
+
+            if not moves:
+                break
+
+            current_mv = moves.pop(0)
+            # Find the child from current_node which's content is identical to current_mv
+            results = [c for c in current_node.children if c.data == current_mv]
+
+            if results:
+                # If such child exists, replace `current_node` to that child
+                # This makes us walk to the deeper tree node to search for the first never-seen moves
+                current_node = results[0]
+            else:
+                # Otherwise, attach a new node to the tree
+                new_node = AnyNode(
+                    data=current_mv,
+                    parent=current_node,
+                    visit_cnt=0,
+                    urls=[],
+                    bwin=0,
+                    wwin=0,
+                    draw=0,
+                    is_terminate_node=False
+                )
+                current_node = new_node
 
     def _symmetrical_incorporate(self, moves: list, url="_sample_url_", game_results="Draw"):
         def find_game_turns_that_is_not_present_on_the_tree(mvs):
@@ -243,10 +242,47 @@ class Incorporator:
                 mvs, url, game_results
             )
 
+    def top_n_moves(self, amount):
+        def dfs(current_node, depth, sgf: str):
+            sgf += str(current_node.data)
+            valid_children = [child for child in current_node.children if child.visit_cnt >= visit_cnt_threshold]
+            valid_children = sorted(valid_children, key=lambda node: node.visit_cnt)
 
-    def to_tuple(self):
-        """Returns a pre-order tree traversal node sequence"""
-        return copy.deepcopy(tuple(node.data for node in PreOrderIter(self.root)))
+            original_length = len(result)
+
+            for child in valid_children:
+                dfs(child, depth + 1, sgf)
+
+            if sgf and is_end_of_turn(depth):
+                if original_length == len(result):
+                    result.append((sgf, current_node.visit_cnt))
+                elif original_length + 1 == len(result):
+                    result.pop(-1)
+                    result.append((sgf, current_node.visit_cnt))
+
+        if amount == 0:
+            return []
+
+        for visit_cnt_threshold in range(self.root.visit_cnt, 0, -1):
+            result = []
+            dfs(self.root, 0, "")
+            print(f"Current threshold is {visit_cnt_threshold : >5}, result has length {len(result): >5} ")
+            if len(result) >= amount or visit_cnt_threshold == 0:
+                return result
+
+
+def to_tuple(an_Incorporator: Incorporator):
+    """Returns a pre-order tree traversal node sequence"""
+    return copy.deepcopy(tuple(node.data for node in PreOrderIter(an_Incorporator.root)))
+
+
+def is_end_of_turn(d):
+    if d == 0 or d == GAME_CONFIG.p:
+        return True
+    elif d > GAME_CONFIG.p and (d - GAME_CONFIG.p) % GAME_CONFIG.q == 0:
+        return True
+    else:
+        return False
 
 
 def dump_to(an_Incorporator: Incorporator, file: TextIO, *, editor_style):
@@ -266,27 +302,20 @@ def dump_to(an_Incorporator: Incorporator, file: TextIO, *, editor_style):
             if len(current_node.children) >= 2:
                 file.write(")")
 
-    def is_end_of_turn(d):
-        if d == GAME_CONFIG.p:
-            return True
-        elif d > GAME_CONFIG.p and (d - GAME_CONFIG.p) % GAME_CONFIG.q == 0:
-            return True
-        else:
-            return False
 
-    def editor_style_tree_traverse(current_node: AnyNode, depth: int, branch_flag: bool, buffer: str, file: TextIO):
+    def editor_style_tree_traverse(current_node: AnyNode, depth: int, branch_flag: bool, sgf: str, file: TextIO):
         depth += 1
         if is_end_of_turn(depth):
             for child in current_node.children:
                 if branch_flag: file.write("(")
-                file.write(f"{buffer};{detailed_str(child)}")
+                file.write(f"{sgf};{detailed_str(child)}")
                 editor_style_tree_traverse(child, depth, len(child.children) > 1, "", file)
                 if branch_flag: file.write(")")
 
         else:
             for child in current_node.children:
                 child_branch_flag = branch_flag or len(child.children) > 1
-                editor_style_tree_traverse(child, depth, child_branch_flag, buffer + ";" + detailed_str(child), file)
+                editor_style_tree_traverse(child, depth, child_branch_flag, sgf + ";" + detailed_str(child), file)
 
     file.write("(;GM[511]")
     if editor_style:
@@ -294,6 +323,7 @@ def dump_to(an_Incorporator: Incorporator, file: TextIO, *, editor_style):
     else:
         simple_tree_traverse(an_Incorporator.root, file)
     file.write(")")
+    file.write(detailed_str(an_Incorporator.root))
 
 
 def to_GoGui_sgf(a_str):

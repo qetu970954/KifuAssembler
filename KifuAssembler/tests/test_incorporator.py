@@ -1,4 +1,4 @@
-from KifuAssembler.src.incorporator import Incorporator, KifuParser, dump_to
+from KifuAssembler.src.incorporator import Incorporator, KifuParser, dump_to, to_tuple
 from KifuAssembler.src.utils import Root, WhiteMove, BlackMove
 import io
 
@@ -8,7 +8,7 @@ def test_Ctor_ReturnsCorrectPreOrderTraversalTuple():
 
     incorporator = Incorporator(moves)
 
-    actual = incorporator.to_tuple()
+    actual = to_tuple(incorporator)
     expected = (Root(),
                 BlackMove(0, 0),
                 WhiteMove(0, 1),
@@ -25,7 +25,7 @@ def test_Incorporate_ReturnsCorrectPreOrderTraversalTuple_0():
     incorporator = Incorporator(moves1)
     incorporator.incorporate(moves2)
 
-    actual = incorporator.to_tuple()
+    actual = to_tuple(incorporator)
     expected = (Root(),
                 BlackMove(0, 0),
                 WhiteMove(0, 1), BlackMove(0, 2),
@@ -41,7 +41,8 @@ def test_Incorporate_ReturnsCorrectPreOrderTraversalTuple_1():
     incorporator = Incorporator(moves1)
     incorporator.incorporate(moves2)
 
-    actual = incorporator.to_tuple()
+    actual = to_tuple(incorporator)
+
     expected = (Root(),
                 BlackMove(0, 0), WhiteMove(0, 1), BlackMove(0, 2),
                 BlackMove(1, 0), WhiteMove(1, 1), BlackMove(0, 2),)
@@ -58,7 +59,8 @@ def test_Incorporate_ReturnsCorrectPreOrderTraversalTuple_2():
     incorporator.incorporate(moves2)
     incorporator.incorporate(moves3)
 
-    actual = incorporator.to_tuple()
+    actual = to_tuple(incorporator)
+
     expected = (Root(),
                 BlackMove(0, 0), WhiteMove(0, 1), BlackMove(0, 2),
                 WhiteMove(0, 2), BlackMove(0, 1),
@@ -76,7 +78,8 @@ def test_Incorporate_ReturnsCorrectPreOrderTraversalTuple_3():
     incorporator.incorporate(moves2)
     incorporator.incorporate(moves3)
 
-    actual = incorporator.to_tuple()
+    actual = to_tuple(incorporator)
+
     expected = (Root(),
                 BlackMove(0, 0), WhiteMove(0, 1), BlackMove(0, 2),
                 WhiteMove(0, 2), BlackMove(0, 1),
@@ -89,7 +92,8 @@ def test_Incorporate_ReturnsCorrectPreOrderTraversalTuple_4():
     incorporator = Incorporator()
     incorporator.incorporate([])
 
-    actual = incorporator.to_tuple()
+    actual = to_tuple(incorporator)
+
     expected = (Root(),)
 
     assert actual == expected
@@ -99,7 +103,7 @@ def test_DumpTo_ReturnsCorrectSgf_0():
     moves1 = [BlackMove(9, 9), WhiteMove(8, 10), WhiteMove(10, 10), ]
     moves2 = [BlackMove(9, 9), WhiteMove(8, 8), WhiteMove(9, 10), ]
 
-    incorporator = Incorporator(moves1, "_sample_url_", "BWin", merge_symmetric_moves=True, use_c6_merge_rules=True)
+    incorporator = Incorporator(moves1, "_sample_url_", game_results="BWin", merge_symmetric_moves=True, use_c6_merge_rules=True)
     incorporator.incorporate(moves2, "_sample_url_", "WWin")
 
     # We use this object to emulate a `file`, so no additional file will be created when unit-testing
@@ -108,7 +112,11 @@ def test_DumpTo_ReturnsCorrectSgf_0():
     actual = file.getvalue()
     print(actual)
     expected = '''\
-(;GM[511];B[jj]C[Visit Count = 2
+(;GM[511]C[Visit Count = 2
+BWin count  = 1
+WWin count  = 1
+Draw count  = 0
+];B[jj]C[Visit Count = 2
 BWin count  = 1
 WWin count  = 1
 Draw count  = 0
@@ -126,146 +134,61 @@ Game urls   = _sample_url_])(;W[jk]C[BWin count  = 0
 WWin count  = 1
 Draw count  = 0
 WinRate     = 100.00%
-Game urls   = _sample_url_]))\
-'''
-
-    assert actual == expected
-
-
-def test_DumpTo_ReturnsCorrectSgf_1():
-    moves1 = [BlackMove(9, 9), WhiteMove(8, 10), WhiteMove(10, 10), BlackMove(9, 10), BlackMove(9, 11)]
-    moves2 = [BlackMove(9, 9), WhiteMove(8, 10), WhiteMove(10, 10), BlackMove(10, 9), BlackMove(11, 9)]
-    moves3 = [BlackMove(9, 9), WhiteMove(8, 8), WhiteMove(9, 10), ]
-
-    incorporator = Incorporator(moves1, "_sample_url_", "WWin")
-    incorporator.incorporate(moves2, "_sample_url_", "WWin")
-    incorporator.incorporate(moves3, "_sample_url_", "BWin")
-
-    file = io.StringIO()
-    dump_to(incorporator, file, editor_style=False)
-    actual = file.getvalue()
-    expected = '''\
-(;GM[511];B[jj]C[Visit Count = 3
+Game urls   = _sample_url_]))C[Visit Count = 2
 BWin count  = 1
-WWin count  = 2
-Draw count  = 0
-WinRate     = 33.33%
-](;W[ik]C[Visit Count = 2
-BWin count  = 0
-WWin count  = 2
-Draw count  = 0
-WinRate     = 100.00%
-];W[kk]C[Visit Count = 2
-BWin count  = 0
-WWin count  = 2
-Draw count  = 0
-WinRate     = 100.00%
-](;B[jk]C[BWin count  = 0
 WWin count  = 1
 Draw count  = 0
-WinRate     = 0.00%
-];B[jl]C[BWin count  = 0
-WWin count  = 1
-Draw count  = 0
-WinRate     = 0.00%
-Game urls   = _sample_url_])(;B[kj]C[BWin count  = 0
-WWin count  = 1
-Draw count  = 0
-WinRate     = 0.00%
-];B[lj]C[BWin count  = 0
-WWin count  = 1
-Draw count  = 0
-WinRate     = 0.00%
-Game urls   = _sample_url_]))(;W[ii]C[BWin count  = 1
-WWin count  = 0
-Draw count  = 0
-WinRate     = 0.00%
-];W[jk]C[BWin count  = 1
-WWin count  = 0
-Draw count  = 0
-WinRate     = 0.00%
-Game urls   = _sample_url_]))\
+]\
 '''
 
     assert actual == expected
 
 
-def test_DumpTo_ReturnsCorrectSgf_2():
-    moves1 = [BlackMove(9, 9), WhiteMove(8, 10), WhiteMove(10, 10), BlackMove(9, 10), BlackMove(9, 11)]
-    moves2 = [BlackMove(9, 9), WhiteMove(8, 10), WhiteMove(10, 10), BlackMove(10, 9), BlackMove(11, 9)]
-    moves3 = [BlackMove(9, 9), ]
-
-    incorporator = Incorporator(moves1)
-    incorporator.incorporate(moves2)
-    incorporator.incorporate(moves3)
-
-    file = io.StringIO()
-    dump_to(incorporator, file, editor_style=False)
-    actual = file.getvalue()
-    print(actual)
-    expected = '''\
-(;GM[511];B[jj]C[Visit Count = 3
-BWin count  = 0
-WWin count  = 0
-Draw count  = 3
-WinRate     = 50.00%
-Game urls   = _sample_url_];W[ik]C[Visit Count = 2
-BWin count  = 0
-WWin count  = 0
-Draw count  = 2
-WinRate     = 50.00%
-];W[kk]C[Visit Count = 2
-BWin count  = 0
-WWin count  = 0
-Draw count  = 2
-WinRate     = 50.00%
-](;B[jk]C[BWin count  = 0
-WWin count  = 0
-Draw count  = 1
-WinRate     = 50.00%
-];B[jl]C[BWin count  = 0
-WWin count  = 0
-Draw count  = 1
-WinRate     = 50.00%
-Game urls   = _sample_url_])(;B[kj]C[BWin count  = 0
-WWin count  = 0
-Draw count  = 1
-WinRate     = 50.00%
-];B[lj]C[BWin count  = 0
-WWin count  = 0
-Draw count  = 1
-WinRate     = 50.00%
-Game urls   = _sample_url_]))\
-'''
-    assert actual == expected
-
-
-def test_EditorStyleDump_ReturnsCorrectSgf_0():
+def test_dumpTo_editorStyleEnabled_ReturnsCorrectSgf_0():
     moves1 = [BlackMove(9, 9), WhiteMove(0, 0), WhiteMove(0, 1)]
-    incorporator = Incorporator(moves1, merge_symmetric_moves=True, use_c6_merge_rules=True)
+    moves2 = [BlackMove(9, 8), WhiteMove(0, 0), WhiteMove(0, 1)]
+    incorporator = Incorporator(moves1, game_results="WWin", merge_symmetric_moves=True, use_c6_merge_rules=True)
+    incorporator.incorporate(moves2, game_results="BWin")
+
     file = io.StringIO()
     dump_to(incorporator, file, editor_style=True)
     actual = file.getvalue()
     print(actual)
     expect = '''\
-(;GM[511];B[jj]C[BWin count  = 0
-WWin count  = 0
-Draw count  = 1
-WinRate     = 50.00%
+(;GM[511](;B[jj]C[BWin count  = 0
+WWin count  = 1
+Draw count  = 0
+WinRate     = 0.00%
 ];W[aa]C[BWin count  = 0
-WWin count  = 0
-Draw count  = 1
-WinRate     = 50.00%
+WWin count  = 1
+Draw count  = 0
+WinRate     = 100.00%
 ];W[ab]C[BWin count  = 0
+WWin count  = 1
+Draw count  = 0
+WinRate     = 100.00%
+Game urls   = _sample_url_])(;B[ij]C[BWin count  = 1
 WWin count  = 0
-Draw count  = 1
-WinRate     = 50.00%
-Game urls   = _sample_url_])\
+Draw count  = 0
+WinRate     = 100.00%
+];W[aa]C[BWin count  = 1
+WWin count  = 0
+Draw count  = 0
+WinRate     = 0.00%
+];W[ba]C[BWin count  = 1
+WWin count  = 0
+Draw count  = 0
+WinRate     = 0.00%
+Game urls   = _sample_url_]))C[Visit Count = 2
+BWin count  = 1
+WWin count  = 1
+Draw count  = 0
+]\
 '''
     assert actual == expect
 
 
-def test_EditorStyleDump_ReturnsCorrectSgf_1():
+def test_dumpTo_editorStyleEnabled_ReturnsCorrectSgf_1():
     moves1 = [BlackMove(9, 9), WhiteMove(0, 0), WhiteMove(0, 1)]
     moves2 = [BlackMove(9, 10), WhiteMove(0, 0), WhiteMove(0, 1)]
 
@@ -300,7 +223,11 @@ WinRate     = 50.00%
 WWin count  = 0
 Draw count  = 1
 WinRate     = 50.00%
-Game urls   = _sample_url_]))\
+Game urls   = _sample_url_]))C[Visit Count = 2
+BWin count  = 0
+WWin count  = 0
+Draw count  = 2
+]\
 '''
     assert actual == expect
 
@@ -326,8 +253,7 @@ def test_parse_ReturnsCorrectMoveList():
     assert actual == expected
 
 
-
-def test_SymmetricalIncorporate_ReturnsCorrectPreOrderTraversalTuple_0():
+def test_incorporate_mergeSymmetricMoves_ReturnsCorrectPreOrderTraversalTuple_0():
     moves1 = [BlackMove(0, 0), WhiteMove(2, 1), BlackMove(0, 2)]
     moves2 = [BlackMove(0, 18), WhiteMove(1, 16), BlackMove(2, 18), ]  # Rotate 90%
     moves3 = [BlackMove(18, 18), WhiteMove(16, 17), BlackMove(18, 16), ]  # Rotate 180%
@@ -340,7 +266,8 @@ def test_SymmetricalIncorporate_ReturnsCorrectPreOrderTraversalTuple_0():
     incorporator.incorporate(moves4)
     incorporator.incorporate(moves5)
 
-    actual = incorporator.to_tuple()
+    actual = to_tuple(incorporator)
+
     expected = (Root(),
                 BlackMove(0, 0),
                 WhiteMove(1, 2),
@@ -349,21 +276,22 @@ def test_SymmetricalIncorporate_ReturnsCorrectPreOrderTraversalTuple_0():
     assert actual == expected
 
 
-def test_IncorporateWithC6FlagEnabled_ReturnsCorrectTuple_0():
+def test_incorporate_C6FlagEnabled_ReturnsCorrectTuple_case0():
     moves1 = [BlackMove(9, 9), WhiteMove(10, 10), WhiteMove(10, 8), ]
     moves2 = [BlackMove(9, 9), WhiteMove(10, 8), WhiteMove(10, 10), ]
 
     incorporator = Incorporator(moves1, merge_symmetric_moves=True, use_c6_merge_rules=True)
     incorporator.incorporate(moves2)
 
-    actual = incorporator.to_tuple()
+    actual = to_tuple(incorporator)
+
     expected = (Root(),
                 BlackMove(9, 9), WhiteMove(8, 8), WhiteMove(8, 10),)
 
     assert actual == expected
 
 
-def test_IncorporateWithC6FlagEnabled_ReturnsCorrectTuple_1():
+def test_incorporate_C6FlagEnabled_ReturnsCorrectTuple_case1():
     moves1 = [BlackMove(9, 9),
               WhiteMove(11, 7), WhiteMove(12, 6),
               BlackMove(11, 11), BlackMove(12, 12),
@@ -395,12 +323,12 @@ def test_IncorporateWithC6FlagEnabled_ReturnsCorrectTuple_1():
                 BlackMove(15, 8),
                 BlackMove(15, 9))
 
-    actual = incorporator.to_tuple()
+    actual = to_tuple(incorporator)
 
     assert actual == expected
 
 
-def test_IncorporateWithC6FlagEnabled_ReturnsCorrectTuple_2():
+def test_incorporate_C6FlagEnabled_ReturnsCorrectTuple_case2():
     moves1 = [BlackMove(9, 9),
               WhiteMove(9, 8), WhiteMove(8, 8)]
 
@@ -409,7 +337,8 @@ def test_IncorporateWithC6FlagEnabled_ReturnsCorrectTuple_2():
 
     incorporator = Incorporator(moves1, merge_symmetric_moves=True, use_c6_merge_rules=True)
     incorporator.incorporate(moves2)
-    actual = incorporator.to_tuple()
+    actual = to_tuple(incorporator)
+
     expected = (Root(),
                 BlackMove(9, 9),
                 WhiteMove(8, 8),
@@ -418,7 +347,7 @@ def test_IncorporateWithC6FlagEnabled_ReturnsCorrectTuple_2():
     assert actual == expected
 
 
-def test_IncorporateWithC6FlagEnabled_ReturnsCorrectTuple_3():
+def test_incorporate_C6FlagEnabled_ReturnsCorrectTuple_case3():
     moves1 = [BlackMove(9, 9),
               WhiteMove(8, 8), WhiteMove(10, 9)]
 
@@ -427,7 +356,8 @@ def test_IncorporateWithC6FlagEnabled_ReturnsCorrectTuple_3():
 
     incorporator = Incorporator(moves1, merge_symmetric_moves=True, use_c6_merge_rules=True)
     incorporator.incorporate(moves2)
-    actual = incorporator.to_tuple()
+    actual = to_tuple(incorporator)
+
     expected = (Root(),
                 BlackMove(9, 9),
                 WhiteMove(8, 8),
@@ -436,7 +366,7 @@ def test_IncorporateWithC6FlagEnabled_ReturnsCorrectTuple_3():
     assert actual == expected
 
 
-def test_IncorporateWithC6FlagEnabled_ReturnsCorrectTuple_4():
+def test_incorporate_C6FlagEnabled_ReturnsCorrectTuple_case4():
     moves1 = [BlackMove(9, 9),
               WhiteMove(8, 8), WhiteMove(9, 7)]
 
@@ -445,7 +375,8 @@ def test_IncorporateWithC6FlagEnabled_ReturnsCorrectTuple_4():
 
     incorporator = Incorporator(moves1, merge_symmetric_moves=True, use_c6_merge_rules=True)
     incorporator.incorporate(moves2)
-    actual = incorporator.to_tuple()
+    actual = to_tuple(incorporator)
+
     expected = (Root(),
                 BlackMove(9, 9),
                 WhiteMove(7, 9),
@@ -454,7 +385,7 @@ def test_IncorporateWithC6FlagEnabled_ReturnsCorrectTuple_4():
     assert actual == expected
 
 
-def test_IncorporateWithC6FlagEnabled_ReturnsCorrectTuple_5():
+def test_incorporate_C6FlagEnabled_ReturnsCorrectTuple_case5():
     moves1 = [BlackMove(9, 9),
               WhiteMove(7, 9), WhiteMove(8, 8), BlackMove(6, 6), BlackMove(7, 7)]
 
@@ -463,7 +394,8 @@ def test_IncorporateWithC6FlagEnabled_ReturnsCorrectTuple_5():
 
     incorporator = Incorporator(moves1, merge_symmetric_moves=True, use_c6_merge_rules=True)
     incorporator.incorporate(moves2)
-    actual = incorporator.to_tuple()
+    actual = to_tuple(incorporator)
+
     expected = (Root(),
                 BlackMove(9, 9),
                 WhiteMove(7, 9),
@@ -474,16 +406,35 @@ def test_IncorporateWithC6FlagEnabled_ReturnsCorrectTuple_5():
     assert actual == expected
 
 
-def test_IncorporateWithC6FlagEnabled_ReturnsCorrectTuple_6():
+def test_incorporate_C6FlagEnabled_ReturnsCorrectTuple_case6():
     moves1 = [BlackMove(9, 9), WhiteMove(7, 9), WhiteMove(8, 8), BlackMove(8, 7)]
     moves2 = [BlackMove(9, 9), WhiteMove(8, 8), WhiteMove(7, 9), BlackMove(8, 7)]
     incorporator = Incorporator(moves1, merge_symmetric_moves=True, use_c6_merge_rules=True)
     incorporator.incorporate(moves2)
 
-    actual = incorporator.to_tuple()
+    actual = to_tuple(incorporator)
     expected = (Root(),
                 BlackMove(9, 9),
                 WhiteMove(7, 9),
                 WhiteMove(8, 8),
                 BlackMove(8, 7),)
+    assert actual == expected
+
+
+def test_topMoves_chooseTop2_ReturnListsOfMoves():
+    moves1 = [BlackMove(9, 9), WhiteMove(0, 0), WhiteMove(0, 2), BlackMove(0, 3), BlackMove(0, 4)]
+    moves2 = [BlackMove(9, 9), WhiteMove(0, 0), WhiteMove(0, 2), BlackMove(0, 3), BlackMove(0, 4)]
+    moves3 = [BlackMove(9, 9), WhiteMove(0, 0), WhiteMove(0, 1)]
+    moves4 = [BlackMove(9, 9), WhiteMove(0, 0), WhiteMove(0, 1)]
+    moves5 = [BlackMove(9, 9), WhiteMove(0, 2), WhiteMove(8, 8)]
+
+    incorporator = Incorporator(moves1, merge_symmetric_moves=True, use_c6_merge_rules=True)
+    incorporator.incorporate(moves2)
+    incorporator.incorporate(moves3)
+    incorporator.incorporate(moves4)
+    incorporator.incorporate(moves5)
+
+    actual = incorporator.top_n_moves(2)
+    expected = [('B[jj]W[aa]W[ac]', 2), ('B[jj]W[aa]W[ab]', 2)]
+
     assert actual == expected

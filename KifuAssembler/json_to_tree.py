@@ -50,19 +50,30 @@ if __name__ == '__main__':
         merge_symmetric_moves=args.enable_symmetrical_assembling,
         use_c6_merge_rules=args.c6
     )
+
     with tqdm.tqdm(total=len(kifus)) as pbar:
+        number_of_skipped_moves = 0
         for kifu, url, game_results in zip(kifus, urls, game_results):
             # Use Kifuparser to parse the raw string into sequence of move
             moves = KifuParser.parse(kifu)
-            if len(moves) < args.lower_bound:
-                continue
 
-            # Use incorporator to incorporate moves into the tree
-            incorporator.incorporate(moves, url, game_results)
+            if len(moves) < args.lower_bound:
+                number_of_skipped_moves += 1
+            else:
+                incorporator.incorporate(moves, url, game_results)
+
             pbar.update(1)
 
-    print(f"'{pbar.total - pbar.n}' kifus are skipped because it has too few moves.\n")
+        print(f"'{number_of_skipped_moves}' kifus are skipped because it has too few moves.\n")
 
     print(f"Writing to file '{args.output_file}'...>")
     with open(args.output_file, "w") as f:
         dump_to(incorporator, f, editor_style=args.c6)
+
+    while True:
+        amount = int(input("Give the number of top n moves: "))
+        if amount == -1:
+            break
+
+        print("\n")
+        print(incorporator.top_n_moves(amount))
