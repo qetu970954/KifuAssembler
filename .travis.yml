@@ -12,7 +12,7 @@ script:
   - poetry run python -m pytest --cov=./ --doctest-modules
   - ./ubuntu_setup.sh
   - scrapy crawl kifu -a player_name=Lomaben -o results/Lomaben.json
-  - python -m KifuAssembler.json_to_tree results/Lomaben.json result.sgf
+  - python -m KifuAssembler.json_to_tree results/Lomaben.json result.sgf 10
 
 after_success:
   - bash <(curl -s https://codecov.io/bash)

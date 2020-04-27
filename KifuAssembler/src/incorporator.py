@@ -242,9 +242,9 @@ class Incorporator:
                 mvs, url, game_results
             )
 
-    def top_n_moves(self, amount):
+    def top_n_moves(self, amount: int):
         def dfs(current_node, depth, sgf: str):
-            sgf += str(current_node.data)
+            sgf += ";" + str(current_node.data)
             valid_children = [child for child in current_node.children if child.visit_cnt >= visit_cnt_threshold]
             valid_children = sorted(valid_children, key=lambda node: node.visit_cnt)
 
@@ -255,20 +255,20 @@ class Incorporator:
 
             if sgf and is_end_of_turn(depth):
                 if original_length == len(result):
-                    result.append((sgf, current_node.visit_cnt))
+                    result.append(sgf)
                 elif original_length + 1 == len(result):
                     result.pop(-1)
-                    result.append((sgf, current_node.visit_cnt))
+                    result.append(sgf)
 
         if amount == 0:
             return []
 
         for visit_cnt_threshold in range(self.root.visit_cnt, 0, -1):
             result = []
-            dfs(self.root, 0, "")
+            dfs(self.root, depth=0, sgf="")
             print(f"Current threshold is {visit_cnt_threshold : >5}, result has length {len(result): >5} ")
             if len(result) >= amount or visit_cnt_threshold == 0:
-                return result
+                return result[:amount:]
 
 
 def to_tuple(an_Incorporator: Incorporator):

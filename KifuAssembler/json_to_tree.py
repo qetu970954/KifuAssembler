@@ -14,7 +14,7 @@ parser.add_argument('json_src',
 
 parser.add_argument('output_file',
     type=str,
-    help="The location to output assembled tree.",
+    help="The location to output the assembled tree.",
     default="results/result.sgf"
 )
 
@@ -31,15 +31,22 @@ parser.add_argument('-l', '--lower_bound',
 
 parser.add_argument('-c6',
     action='store_true',
-    help="Use connect6 merge rule (i.e., (W0, W1) and (W1, W0) are considered interchangeable)."
+    help="Use connect6 merge rule. (I.e., (W0, W1) and (W1, W0) are considered interchangeable.)"
 )
+
+parser.add_argument('--num_of_openings',
+    type=int,
+    default=0,
+    help="Get common openings from the assembled tree and dump them to 'openings.txt'"
+)
+
 
 if __name__ == '__main__':
     args = parser.parse_args()
 
     if not os.path.exists(args.json_src):
         print(f"Error! The json src file {args.json_src} does not exist!")
-        exit()
+        exit(-1)
 
     kifus = Extractor().extract(args.json_src, "kifu")
     urls = Extractor().extract(args.json_src, "url")
@@ -70,10 +77,6 @@ if __name__ == '__main__':
     with open(args.output_file, "w") as f:
         dump_to(incorporator, f, editor_style=args.c6)
 
-    while True:
-        amount = int(input("Give the number of top n moves: "))
-        if amount == -1:
-            break
-
-        print("\n")
-        print(incorporator.top_n_moves(amount))
+    if args.num_of_openings != 0:
+        with open("openings.txt", "w") as f:
+            f.write(str(incorporator.top_n_moves(args.num_of_openings)))

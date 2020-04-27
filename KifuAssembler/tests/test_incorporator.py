@@ -103,7 +103,8 @@ def test_DumpTo_ReturnsCorrectSgf_0():
     moves1 = [BlackMove(9, 9), WhiteMove(8, 10), WhiteMove(10, 10), ]
     moves2 = [BlackMove(9, 9), WhiteMove(8, 8), WhiteMove(9, 10), ]
 
-    incorporator = Incorporator(moves1, "_sample_url_", game_results="BWin", merge_symmetric_moves=True, use_c6_merge_rules=True)
+    incorporator = Incorporator(moves1, "_sample_url_", game_results="BWin", merge_symmetric_moves=True,
+        use_c6_merge_rules=True)
     incorporator.incorporate(moves2, "_sample_url_", "WWin")
 
     # We use this object to emulate a `file`, so no additional file will be created when unit-testing
@@ -116,21 +117,21 @@ def test_DumpTo_ReturnsCorrectSgf_0():
 BWin count  = 1
 WWin count  = 1
 Draw count  = 0
-];B[jj]C[Visit Count = 2
+];B[JJ]C[Visit Count = 2
 BWin count  = 1
 WWin count  = 1
 Draw count  = 0
 WinRate     = 50.00%
-];W[ii]C[Visit Count = 2
+];W[II]C[Visit Count = 2
 BWin count  = 1
 WWin count  = 1
 Draw count  = 0
 WinRate     = 50.00%
-](;W[ik]C[BWin count  = 1
+](;W[IK]C[BWin count  = 1
 WWin count  = 0
 Draw count  = 0
 WinRate     = 0.00%
-Game urls   = _sample_url_])(;W[jk]C[BWin count  = 0
+Game urls   = _sample_url_])(;W[JK]C[BWin count  = 0
 WWin count  = 1
 Draw count  = 0
 WinRate     = 100.00%
@@ -155,27 +156,27 @@ def test_dumpTo_editorStyleEnabled_ReturnsCorrectSgf_0():
     actual = file.getvalue()
     print(actual)
     expect = '''\
-(;GM[511](;B[jj]C[BWin count  = 0
+(;GM[511](;B[JJ]C[BWin count  = 0
 WWin count  = 1
 Draw count  = 0
 WinRate     = 0.00%
-];W[aa]C[BWin count  = 0
+];W[AA]C[BWin count  = 0
 WWin count  = 1
 Draw count  = 0
 WinRate     = 100.00%
-];W[ab]C[BWin count  = 0
+];W[AB]C[BWin count  = 0
 WWin count  = 1
 Draw count  = 0
 WinRate     = 100.00%
-Game urls   = _sample_url_])(;B[ij]C[BWin count  = 1
+Game urls   = _sample_url_])(;B[IJ]C[BWin count  = 1
 WWin count  = 0
 Draw count  = 0
 WinRate     = 100.00%
-];W[aa]C[BWin count  = 1
+];W[AA]C[BWin count  = 1
 WWin count  = 0
 Draw count  = 0
 WinRate     = 0.00%
-];W[ba]C[BWin count  = 1
+];W[BA]C[BWin count  = 1
 WWin count  = 0
 Draw count  = 0
 WinRate     = 0.00%
@@ -199,27 +200,27 @@ def test_dumpTo_editorStyleEnabled_ReturnsCorrectSgf_1():
     actual = file.getvalue()
     print(actual)
     expect = '''\
-(;GM[511](;B[jj]C[BWin count  = 0
+(;GM[511](;B[JJ]C[BWin count  = 0
 WWin count  = 0
 Draw count  = 1
 WinRate     = 50.00%
-];W[aa]C[BWin count  = 0
+];W[AA]C[BWin count  = 0
 WWin count  = 0
 Draw count  = 1
 WinRate     = 50.00%
-];W[ab]C[BWin count  = 0
+];W[AB]C[BWin count  = 0
 WWin count  = 0
 Draw count  = 1
 WinRate     = 50.00%
-Game urls   = _sample_url_])(;B[ij]C[BWin count  = 0
+Game urls   = _sample_url_])(;B[IJ]C[BWin count  = 0
 WWin count  = 0
 Draw count  = 1
 WinRate     = 50.00%
-];W[ra]C[BWin count  = 0
+];W[RA]C[BWin count  = 0
 WWin count  = 0
 Draw count  = 1
 WinRate     = 50.00%
-];W[sa]C[BWin count  = 0
+];W[SA]C[BWin count  = 0
 WWin count  = 0
 Draw count  = 1
 WinRate     = 50.00%
@@ -435,6 +436,6 @@ def test_topMoves_chooseTop2_ReturnListsOfMoves():
     incorporator.incorporate(moves5)
 
     actual = incorporator.top_n_moves(2)
-    expected = [('B[jj]W[aa]W[ac]', 2), ('B[jj]W[aa]W[ab]', 2)]
+    expected = [';;B[JJ];W[AA];W[AC]', ';;B[JJ];W[AA];W[AB]']
 
     assert actual == expected

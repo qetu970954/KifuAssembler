@@ -42,7 +42,7 @@ class BlackMove:
         return not self.__eq__(other)
 
     def __str__(self) -> str:
-        return f"B[{'abcdefghijklmnopqrs'[self.i]}{'abcdefghijklmnopqrs'[self.j]}]"
+        return f"B[{'ABCDEFGHIJKLMNOPQRS'[self.i]}{'ABCDEFGHIJKLMNOPQRS'[self.j]}]"
 
     def __repr__(self):
         return f"BlackMove(x={self.i}, y={self.j})"
@@ -79,7 +79,7 @@ class WhiteMove:
         return not self.__eq__(other)
 
     def __str__(self) -> str:
-        return f"W[{'abcdefghijklmnopqrs'[self.i]}{'abcdefghijklmnopqrs'[self.j]}]"
+        return f"W[{'ABCDEFGHIJKLMNOPQRS'[self.i]}{'ABCDEFGHIJKLMNOPQRS'[self.j]}]"
 
     def __repr__(self):
         return f"WhiteMove(x={self.i}, y={self.j})"
@@ -98,9 +98,9 @@ class WhiteMove:
 
 def gogui_style_str(move):
     if isinstance(move, BlackMove):
-        return f"B[{'abcdefghijklmnopqrs'[move.i]}{'srqponmlkjihgfedcba'[move.j]}]"
+        return f"B[{'ABCDEFGHIJKLMNOPQRS'[move.i]}{'SRQPONMLKJIHGFEDCBA'[move.j]}]"
     elif isinstance(move, WhiteMove):
-        return f"W[{'abcdefghijklmnopqrs'[move.i]}{'srqponmlkjihgfedcba'[move.j]}]"
+        return f"W[{'ABCDEFGHIJKLMNOPQRS'[move.i]}{'SRQPONMLKJIHGFEDCBA'[move.j]}]"
     else:
         return ""
 
