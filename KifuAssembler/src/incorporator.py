@@ -84,6 +84,11 @@ def detailed_str(a_node: AnyNode):
     if a_node.urls and a_node.is_terminate_node:
         result += f"Game urls   = "
         result += ", ".join(a_node.urls)
+        result += "\n"
+
+    if a_node.is_a_chosen_opening:
+        result += f"Chosen opening!\n"
+
     result += "]"
     return result
 
@@ -128,6 +133,7 @@ class Incorporator:
             bwin=0,
             wwin=0,
             draw=0,
+            is_a_chosen_opening=False,
             is_terminate_node=False
         )
 
@@ -182,6 +188,7 @@ class Incorporator:
                     bwin=0,
                     wwin=0,
                     draw=0,
+                    is_a_chosen_opening=False,
                     is_terminate_node=False
                 )
                 current_node = new_node
@@ -256,18 +263,27 @@ class Incorporator:
             if sgf and is_end_of_turn(depth):
                 if original_length == len(result):
                     result.append(sgf)
+                    result_nodes.append(current_node)
+
                 elif original_length + 1 == len(result):
                     result.pop(-1)
                     result.append(sgf)
+                    result_nodes.pop(-1)
+                    result_nodes.append(current_node)
 
         if amount == 0:
             return []
 
         for visit_cnt_threshold in range(self.root.visit_cnt, 0, -1):
             result = []
+            result_nodes = []
+
             dfs(self.root, depth=0, sgf="")
+
             print(f"Current threshold is {visit_cnt_threshold : >5}, result has length {len(result): >5} ")
             if len(result) >= amount or visit_cnt_threshold == 0:
+                for node in result_nodes[:amount:]:
+                    node.is_a_chosen_opening = True
                 return result[:amount:]
 
 

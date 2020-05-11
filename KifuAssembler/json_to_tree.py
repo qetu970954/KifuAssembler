@@ -40,7 +40,6 @@ parser.add_argument('--num_of_openings',
     help="Get common openings from the assembled tree and dump them to 'openings.txt'"
 )
 
-
 if __name__ == '__main__':
     args = parser.parse_args()
 
@@ -73,10 +72,10 @@ if __name__ == '__main__':
 
         print(f"'{number_of_skipped_moves}' kifus are skipped because it has too few moves.\n")
 
-    print(f"Writing to file '{args.output_file}'...>")
-    with open(args.output_file, "w") as f:
-        dump_to(incorporator, f, editor_style=args.c6)
-
     if args.num_of_openings != 0:
         with open("openings.txt", "w") as f:
             f.write(str(incorporator.top_n_moves(args.num_of_openings)))
+
+    print(f"Writing to file '{args.output_file}'...>")
+    with open(args.output_file, "w") as f:
+        dump_to(incorporator, f, editor_style=args.c6)
