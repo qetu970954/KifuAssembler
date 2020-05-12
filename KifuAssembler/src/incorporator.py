@@ -194,60 +194,17 @@ class Incorporator:
                 current_node = new_node
 
     def _symmetrical_incorporate(self, moves: list, url="_sample_url_", game_results="Draw"):
-        def find_game_turns_that_is_not_present_on_the_tree(mvs):
-            current_node = self.root
-            idx, turns = 0, 0
-
-            while idx < len(mvs):
-                children = [c for c in current_node.children if c.data == mvs[idx]]
-                if children:
-                    chosen_child = min(children)
-                    idx += 1
-                    if (idx - GAME_CONFIG.p) % GAME_CONFIG.q == 0:
-                        turns += 1
-                    current_node = chosen_child
-                else:
-                    break
-
-            return turns
-
         if len(moves) == 0:
             return
 
-        # Start checks the first moves which is NOT presented on the tree
-        if self.use_c6_merge_rules:
-            idx1 = find_game_turns_that_is_not_present_on_the_tree(rearrange(moves))
-        else:
-            idx1 = find_game_turns_that_is_not_present_on_the_tree(rearrange(moves))
-
         symmetric_moves_lists = []
-        if self.use_c6_merge_rules:
-            # Get all possible symmetrical moves, including rearranged
-            for action in all_possible_actions():
-                sym_mvs = moves[0:idx1] + [action(mv) for mv in moves[idx1:]]
-                symmetric_moves_lists.append(rearrange(sym_mvs))
+        for action in all_possible_actions():
+            sym_mvs = rearrange([action(mv) for mv in moves])
+            symmetric_moves_lists.append(sym_mvs)
 
-            # Find one of the symmetric moves that maximize the similarity of moves inside the tree.
-            # The 'similarity' is calculated by finding the first index of move that does not show on the tree.
-            # The higher the index is, the more similarity it gets.
-            mvs = min(symmetric_moves_lists,
-                key=lambda mvs: (-find_game_turns_that_is_not_present_on_the_tree(mvs), mvs))
+        mvs = min(symmetric_moves_lists, key=lambda mvs: mvs)
 
-            # Merge the result with moves rearranged
-            self._incorporate(
-                rearrange(mvs), url, game_results
-            )
-
-        else:
-            table = build_symmetric_lookup_table()
-            for action in table[(moves[idx1].i, moves[idx1].j)]:
-                sym_mvs = moves[0:idx1] + [action(mv) for mv in moves[idx1:]]
-                symmetric_moves_lists.append(sym_mvs)
-
-            mvs = max(symmetric_moves_lists, key=lambda mvs: find_game_turns_that_is_not_present_on_the_tree(mvs))
-            self._incorporate(
-                mvs, url, game_results
-            )
+        self._incorporate(mvs, url, game_results)
 
     def top_n_moves(self, amount: int):
         def dfs(current_node, depth, sgf: str):

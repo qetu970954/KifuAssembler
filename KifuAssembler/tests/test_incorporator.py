@@ -131,11 +131,13 @@ WinRate     = 50.00%
 WWin count  = 0
 Draw count  = 0
 WinRate     = 0.00%
-Game urls   = _sample_url_])(;W[JK]C[BWin count  = 0
+Game urls   = _sample_url_
+])(;W[JK]C[BWin count  = 0
 WWin count  = 1
 Draw count  = 0
 WinRate     = 100.00%
-Game urls   = _sample_url_]))C[Visit Count = 2
+Game urls   = _sample_url_
+]))C[Visit Count = 2
 BWin count  = 1
 WWin count  = 1
 Draw count  = 0
@@ -168,7 +170,8 @@ WinRate     = 100.00%
 WWin count  = 1
 Draw count  = 0
 WinRate     = 100.00%
-Game urls   = _sample_url_])(;B[IJ]C[BWin count  = 1
+Game urls   = _sample_url_
+])(;B[IJ]C[BWin count  = 1
 WWin count  = 0
 Draw count  = 0
 WinRate     = 100.00%
@@ -180,7 +183,8 @@ WinRate     = 0.00%
 WWin count  = 0
 Draw count  = 0
 WinRate     = 0.00%
-Game urls   = _sample_url_]))C[Visit Count = 2
+Game urls   = _sample_url_
+]))C[Visit Count = 2
 BWin count  = 1
 WWin count  = 1
 Draw count  = 0
@@ -212,7 +216,8 @@ WinRate     = 50.00%
 WWin count  = 0
 Draw count  = 1
 WinRate     = 50.00%
-Game urls   = _sample_url_])(;B[IJ]C[BWin count  = 0
+Game urls   = _sample_url_
+])(;B[IJ]C[BWin count  = 0
 WWin count  = 0
 Draw count  = 1
 WinRate     = 50.00%
@@ -224,7 +229,8 @@ WinRate     = 50.00%
 WWin count  = 0
 Draw count  = 1
 WinRate     = 50.00%
-Game urls   = _sample_url_]))C[Visit Count = 2
+Game urls   = _sample_url_
+]))C[Visit Count = 2
 BWin count  = 0
 WWin count  = 0
 Draw count  = 2
@@ -261,7 +267,7 @@ def test_incorporate_mergeSymmetricMoves_ReturnsCorrectPreOrderTraversalTuple_0(
     moves4 = [BlackMove(18, 0), WhiteMove(17, 2), BlackMove(16, 0), ]  # Rotate 270%
     moves5 = [BlackMove(0, 18), WhiteMove(2, 17), BlackMove(0, 16), ]  # Horizontal reflection
 
-    incorporator = Incorporator(moves1, merge_symmetric_moves=True)
+    incorporator = Incorporator(moves1, merge_symmetric_moves=True, use_c6_merge_rules=True)
     incorporator.incorporate(moves2)
     incorporator.incorporate(moves3)
     incorporator.incorporate(moves4)
@@ -419,6 +425,22 @@ def test_incorporate_C6FlagEnabled_ReturnsCorrectTuple_case6():
                 WhiteMove(7, 9),
                 WhiteMove(8, 8),
                 BlackMove(8, 7),)
+    assert actual == expected
+
+
+def test_incorporate_C6FlagEnabled_ReturnsCorrectTuple_case7():
+    moves1 = [BlackMove(9, 9), WhiteMove(9, 8), WhiteMove(8, 9), BlackMove(8, 8), BlackMove(7, 10)]
+    moves2 = [BlackMove(9, 9), WhiteMove(9, 8), WhiteMove(8, 9), BlackMove(8, 8), BlackMove(10, 7)]
+    incorporator = Incorporator(moves1, merge_symmetric_moves=True, use_c6_merge_rules=True)
+    incorporator.incorporate(moves2)
+
+    actual = to_tuple(incorporator)
+    expected = (Root(),
+                BlackMove(9, 9),
+                WhiteMove(8, 9),
+                WhiteMove(9, 8),
+                BlackMove(8, 8),
+                BlackMove(7, 10),)
     assert actual == expected
 
 
