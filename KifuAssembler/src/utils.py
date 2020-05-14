@@ -3,6 +3,7 @@ Node-Type
 """
 import copy
 from collections import defaultdict, namedtuple
+from itertools import product
 
 GAME_CONFIG = namedtuple("CONNECT_GAME_CONFIG", ['m', 'n', 'k', 'p', 'q'])(19, 19, 6, 1, 2)
 
@@ -191,3 +192,52 @@ def all_possible_actions() -> list:
             horizontal_reflect_rotate_90,
             horizontal_reflect_rotate_180,
             horizontal_reflect_rotate_270, ]
+
+
+class KifuParser:
+    """
+    Kifu parser to convert a smart game format (from Little Golem) into a sequence of moves.
+    """
+    table = {}
+
+    for i, j in product("abcdefghijklmnopqrs", range(1, 20)):
+        table[f"{i}{j}"] = ("abcdefghijklmnopqrs".index(i), j - 1)
+
+    for i, j in product("abcdefghijklmnopqrs", "abcdefghijklmnopqrs"):
+        table[f"{i}{j}"] = ("abcdefghijklmnopqrs".index(i), "abcdefghijklmnopqrs".index(j))
+
+    for i, j, i2, j2 in product("abcdefghijklmnopqrs", range(1, 20), "abcdefghijklmnopqrs", range(1, 20)):
+        table[f"{i}{j}{i2}{j2}"] = \
+            ("abcdefghijklmnopqrs".index(i), j - 1, "abcdefghijklmnopqrs".index(i2), j2 - 1)
+
+    @staticmethod
+    def parse(content: str):
+        # Split content by ';' and discard the element if it is empty.
+        moves = [e for e in content[1:-1].split(';') if e]
+        moves.pop(0)
+
+        result = []
+
+        # For each moves, take out the mapped action and transform to Objects
+        for move in moves:
+            role = move[0]
+            action_key = move[2:move.index("]")]
+            if role == 'B':
+                if len(KifuParser.table[action_key]) == 2:
+                    i, j = KifuParser.table[action_key]
+                    result.append(BlackMove(i, j))
+                elif len(KifuParser.table[action_key]) == 4:
+                    i1, j1, i2, j2 = KifuParser.table[action_key]
+                    result.append(BlackMove(i1, j1))
+                    result.append(BlackMove(i2, j2))
+
+            elif role == 'W':
+                if len(KifuParser.table[action_key]) == 2:
+                    i, j = KifuParser.table[action_key]
+                    result.append(WhiteMove(i, j))
+                elif len(KifuParser.table[action_key]) == 4:
+                    i1, j1, i2, j2 = KifuParser.table[action_key]
+                    result.append(WhiteMove(i1, j1))
+                    result.append(WhiteMove(i2, j2))
+
+        return result

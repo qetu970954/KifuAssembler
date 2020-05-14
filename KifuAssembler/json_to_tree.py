@@ -3,7 +3,8 @@ import argparse
 import os
 import tqdm
 from KifuAssembler.src.extractor import Extractor
-from KifuAssembler.src.incorporator import Incorporator, KifuParser, dump_to
+from KifuAssembler.src.incorporator import Incorporator, dump_to
+from KifuAssembler.src.utils import KifuParser
 
 parser = argparse.ArgumentParser(description="Assemble kifus to a kifu tree.")
 

@@ -1,5 +1,5 @@
-from KifuAssembler.src.incorporator import Incorporator, KifuParser, dump_to, to_tuple
-from KifuAssembler.src.utils import Root, WhiteMove, BlackMove
+from KifuAssembler.src.incorporator import Incorporator, dump_to, to_tuple
+from KifuAssembler.src.utils import KifuParser, Root, WhiteMove, BlackMove
 import io
 
 

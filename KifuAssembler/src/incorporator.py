@@ -1,60 +1,10 @@
-from itertools import product
 from typing import TextIO
 
 from anytree import AnyNode, PreOrderIter
 
-from KifuAssembler.src.utils import Root, WhiteMove, BlackMove, gogui_style_str, build_symmetric_lookup_table, \
+from KifuAssembler.src.utils import KifuParser, Root, WhiteMove, BlackMove, gogui_style_str, \
     all_possible_actions, GAME_CONFIG
 import copy
-
-
-class KifuParser:
-    """
-    Kifu parser to convert a smart game format (from Little Golem) into a sequence of moves.
-    """
-    table = {}
-
-    for i, j in product("abcdefghijklmnopqrs", range(1, 20)):
-        table[f"{i}{j}"] = ("abcdefghijklmnopqrs".index(i), j - 1)
-
-    for i, j in product("abcdefghijklmnopqrs", "abcdefghijklmnopqrs"):
-        table[f"{i}{j}"] = ("abcdefghijklmnopqrs".index(i), "abcdefghijklmnopqrs".index(j))
-
-    for i, j, i2, j2 in product("abcdefghijklmnopqrs", range(1, 20), "abcdefghijklmnopqrs", range(1, 20)):
-        table[f"{i}{j}{i2}{j2}"] = \
-            ("abcdefghijklmnopqrs".index(i), j - 1, "abcdefghijklmnopqrs".index(i2), j2 - 1)
-
-    @staticmethod
-    def parse(content: str):
-        # Split content by ';' and discard the element if it is empty.
-        moves = [e for e in content[1:-1].split(';') if e]
-        moves.pop(0)
-
-        result = []
-
-        # For each moves, take out the mapped action and transform to Objects
-        for move in moves:
-            role = move[0]
-            action_key = move[2:move.index("]")]
-            if role == 'B':
-                if len(KifuParser.table[action_key]) == 2:
-                    i, j = KifuParser.table[action_key]
-                    result.append(BlackMove(i, j))
-                elif len(KifuParser.table[action_key]) == 4:
-                    i1, j1, i2, j2 = KifuParser.table[action_key]
-                    result.append(BlackMove(i1, j1))
-                    result.append(BlackMove(i2, j2))
-
-            elif role == 'W':
-                if len(KifuParser.table[action_key]) == 2:
-                    i, j = KifuParser.table[action_key]
-                    result.append(WhiteMove(i, j))
-                elif len(KifuParser.table[action_key]) == 4:
-                    i1, j1, i2, j2 = KifuParser.table[action_key]
-                    result.append(WhiteMove(i1, j1))
-                    result.append(WhiteMove(i2, j2))
-
-        return result
 
 
 def detailed_str(a_node: AnyNode):
@@ -194,6 +144,23 @@ class Incorporator:
                 current_node = new_node
 
     def _symmetrical_incorporate(self, moves: list, url="_sample_url_", game_results="Draw"):
+        def find_game_turns_that_is_not_present_on_the_tree(mvs):
+            current_node = self.root
+            idx, turns = 0, 0
+
+            while idx < len(mvs):
+                children = [c for c in current_node.children if c.data == mvs[idx]]
+                if children:
+                    chosen_child = min(children)
+                    idx += 1
+                    if (idx - GAME_CONFIG.p) % GAME_CONFIG.q == 0:
+                        turns += 1
+                    current_node = chosen_child
+                else:
+                    break
+
+            return turns
+
         if len(moves) == 0:
             return
 
@@ -203,6 +170,12 @@ class Incorporator:
             symmetric_moves_lists.append(sym_mvs)
 
         mvs = min(symmetric_moves_lists, key=lambda mvs: mvs)
+
+        largest_depth = find_game_turns_that_is_not_present_on_the_tree(mvs)
+
+        # Assert that the chosen move list has the largest depth
+        assert all([find_game_turns_that_is_not_present_on_the_tree(moves_list) <= largest_depth for moves_list in
+                    symmetric_moves_lists])
 
         self._incorporate(mvs, url, game_results)
 
