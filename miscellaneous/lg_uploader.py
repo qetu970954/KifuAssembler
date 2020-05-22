@@ -50,7 +50,8 @@ def main():
 
             # Launch czf for competition
             proc = subprocess.Popen(
-                ['podman', 'run', '-i',
+                ['podman', 'run', '-i', '--rm',
+                 f'-e=NVIDIA_VISIBLE_DEVICES={config["gpu_id"]}',
                  f'-v={config["working_dir"]}:/czf',
                  '-w=/czf', 'czf',
                  './ai', 'latest.weight', 'latest.model', f'{config["sim_cnt"]}'],

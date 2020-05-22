@@ -3,3 +3,4 @@ password: horupude
 working_dir: /mnt/nfs/work/qetu970954/czf/experiments_archive/C6_20200416/NETWORK_SAVE_DIR_lr_0.001_simulation_600/
 sim_cnt: 40001
 poll_seconds: 1800
+gpu_id: 0
