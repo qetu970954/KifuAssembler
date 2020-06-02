@@ -1,6 +1,12 @@
 login: FancyBen
 password: horupude
-working_dir: /mnt/nfs/work/qetu970954/czf/experiments_archive/C6_20200416/NETWORK_SAVE_DIR_lr_0.001_simulation_600/
-sim_cnt: 40001
-poll_seconds: 1800
+
+working_dir:
+  root: /mnt/nfs/work/qetu970954/czf/experiments_archive/C6_20200416/
+  network_path: NETWORK_SAVE_DIR_lr_0.001_simulation_600
+  ai_path: release
+
+sim_cnt: 400001
+poll_seconds: 300
 gpu_id: 0
+game_text_output_dir: games_competition

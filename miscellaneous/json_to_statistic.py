@@ -12,14 +12,6 @@ from KifuAssembler.src.utils import KifuParser
 from collections import Counter, namedtuple
 from concurrent.futures import ProcessPoolExecutor
 
-parser = argparse.ArgumentParser(description="Parse json file crawled from LG into statistics")
-parser.add_argument("batch_size", help="Number of games contained for each statistic files", type=int)
-parser.add_argument("input_json", help="The json file to see")
-parser.add_argument("output_dir", help="The directory to output statistics.")
-parser.add_argument("-w", "--workers", help="Number of workers available (to parallel execution).", default=4, type=int)
-
-Pair = namedtuple("Pair", ["kifu", "result"])
-
 
 def dump_to_yml(args, result_counter, batch_of_actions, batch_of_pis):
     with Path(args.output_dir) \
@@ -39,7 +31,7 @@ def main():
     kifus = Extractor().extract(args.input_json, "kifu")
     game_results = Extractor().extract(args.input_json, "game_result")
 
-    k_r_pairs = []  # Kifu_result_pairs
+    k_r_pairs = []  # 'K'ifu_'R'esult_pairs
     for k, g in zip(kifus, game_results):
         k_r_pairs.append(Pair(k, g))
 
@@ -84,4 +76,12 @@ def main():
 
 
 if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description="Parse json file crawled from LG into statistics")
+    parser.add_argument("batch_size", help="Number of games contained for each statistic files", type=int)
+    parser.add_argument("input_json", help="The json file to see")
+    parser.add_argument("output_dir", help="The directory to output statistics.")
+    parser.add_argument("-w", "--workers", help="Number of workers available (for parallel execution).", default=4,
+        type=int)
+
+    Pair = namedtuple("Pair", ["kifu", "result"])
     main()

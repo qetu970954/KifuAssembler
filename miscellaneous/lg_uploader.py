@@ -1,6 +1,7 @@
 import re
 import subprocess
 from itertools import product
+from pathlib import Path
 from time import sleep
 
 import requests
@@ -49,29 +50,39 @@ def main():
             moves = KifuParser.parse(sgf)[1::]  # Ignore first move, usually B[JJ], because czf already placed it.
 
             # Launch czf for competition
-            proc = subprocess.Popen(
-                ['podman', 'run', '-i', '--rm',
-                 f'-e=NVIDIA_VISIBLE_DEVICES={config["gpu_id"]}',
-                 f'-v={config["working_dir"]}:/czf',
-                 '-w=/czf', 'czf',
-                 './ai', 'latest.weight', 'latest.model', f'{config["sim_cnt"]}'],
-                stdin=subprocess.PIPE, stdout=subprocess.PIPE, encoding="utf-8")
+            working_dir = Path(config["working_dir"]["root"])
 
-            # Convert moves to czf compatible moves, and feed into the process
-            for str_mv in ["ABCDEFGHJKLMNOPQRSTUVWXYZ"[mv.i] + str(mv.j + 1) for mv in moves]:
-                proc.stdin.write(f"play d {str_mv}\n")
+            try:
+                proc = subprocess.Popen(
+                    ['podman', 'run', '-i', '--rm',
+                     f'-e=NVIDIA_VISIBLE_DEVICES={config["gpu_id"]}',
+                     f'-v={working_dir.as_posix()}:/work',
+                     '-w=/work', 'czf',
+                     f'./{config["working_dir"]["ai_path"]}/ai',
+                     f'./{config["working_dir"]["network_path"]}/latest.weight',
+                     f'./{config["working_dir"]["network_path"]}/latest.model',
+                     f'{config["sim_cnt"]}'],
+                    stdin=subprocess.PIPE, stdout=subprocess.PIPE, encoding="utf-8", bufsize=1
+                )
 
-            # Let czf compute think two moves
-            proc.stdin.write("genmove\n")
-            proc.stdin.write("genmove\n")
-            proc.stdin.write("quit\n")
-            proc.stdin.flush()
-            out, _ = proc.communicate()
+                # Convert moves to czf compatible moves, and feed into the process
+                for str_mv in ["ABCDEFGHJKLMNOPQRSTUVWXYZ"[mv.i] + str(mv.j + 1) for mv in moves]:
+                    proc.stdin.write(f"play d {str_mv}\n")
 
-            # Grep results
-            mv1, mv2 = re.findall("= [0-9A-Z]+", out)
-            mv1, mv2 = mv1[2:], mv2[2:]
-            print(f"First move is : {mv1}. Second move is : {mv2}.")
+                # Let czf compute think two moves
+                proc.stdin.write("c6genmove\n")
+                proc.stdin.write("winrate_of_lastplayer\n")
+                proc.stdin.write("quit\n")
+                proc.stdin.flush()
+                out, _ = proc.communicate()
+            except KeyboardInterrupt:
+                proc.terminate()
+                return
+
+            mvs, winrate = [line[2:] for line in out.splitlines() if line[2:]]
+            mv1, mv2 = mvs.split("_and_")
+
+            print(f"First move is : {mv1}. Second move is : {mv2}, last player has winrate {winrate}")
 
             # Get the table for converting czf moves to little Golem compatible moves
             table = get_convert_table()
@@ -81,6 +92,11 @@ def main():
                 params={"sendgame": f"{gid}", "sendmove": f"{table[mv1]}{table[mv2]}"},
                 cookies=player_cookies
             )
+
+            text_output_dir = Path(config["game_text_output_dir"])
+            text_output_dir.mkdir(exist_ok=True, parents=True)
+            with text_output_dir.joinpath(f"{gid}.txt").open("a+") as f:
+                print(f"{table[mv1]}, {table[mv2]}, {winrate}", file=f)
 
 
 if __name__ == '__main__':
@@ -92,4 +108,3 @@ if __name__ == '__main__':
         print("Sleeping...")
         for _ in tqdm.tqdm(range(config["poll_seconds"])):
             sleep(1)
-
