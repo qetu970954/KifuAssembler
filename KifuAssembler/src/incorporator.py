@@ -275,3 +275,7 @@ def dump_to(an_Incorporator: Incorporator, file: TextIO, *, editor_style):
 def to_GoGui_sgf(a_str):
     moves = [gogui_style_str(mv) for mv in KifuParser.parse(a_str)][1:]
     return "(;FF[4]CA[UTF-8]AP[GoGui:1.5.1];" + ";".join(moves) + ")"
+
+
+def to_Pure_sgf(a_str):
+    return "".join([";" + str(mv) for mv in KifuParser.parse(a_str)])

@@ -79,9 +79,11 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Parse json file crawled from LG into statistics")
     parser.add_argument("batch_size", help="Number of games contained for each statistic files", type=int)
     parser.add_argument("input_json", help="The json file to see")
-    parser.add_argument("output_dir", help="The directory to output statistics.")
-    parser.add_argument("-w", "--workers", help="Number of workers available (for parallel execution).", default=4,
-        type=int)
+    parser.add_argument("output_dir", help="The directory to output statistics")
+    parser.add_argument("-w", "--workers", help="Number of workers available (for parallel execution).",
+        default=4,
+        type=int
+    )
 
     Pair = namedtuple("Pair", ["kifu", "result"])
     main()

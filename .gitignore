@@ -3,3 +3,4 @@
 __pycache__
 *.sgf
 *.coverage
+lg_uploader_config.yml

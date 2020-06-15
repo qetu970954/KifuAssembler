@@ -7,6 +7,7 @@ from itertools import product
 
 GAME_CONFIG = namedtuple("CONNECT_GAME_CONFIG", ['m', 'n', 'k', 'p', 'q'])(19, 19, 6, 1, 2)
 
+
 class Root:
     """
     >>> Root() == Root()
