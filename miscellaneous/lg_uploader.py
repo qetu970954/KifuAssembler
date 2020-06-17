@@ -54,11 +54,11 @@ def GetNCTU6Result(sgf):
 
     print(f"nctu6_output is {nctu6_outputs}")
 
-    if nctu6_outputs[3] in ["C[B:w]", "C[B:a-w]"] and nctu6_outputs[1][0] == "B":
+    if nctu6_outputs[3] in ["C[B:w]", "C[B:a_w]"] and nctu6_outputs[1][0] == "B":
         print("NCTU6 says black win")
         return nctu6_outputs[1][2:4].lower(), nctu6_outputs[2][2:4].lower()
 
-    elif nctu6_outputs[3] in ["C[W:w]", "C[W:a-w]"] and nctu6_outputs[1][0] == "W":
+    elif nctu6_outputs[3] in ["C[W:w]", "C[W:a_w]"] and nctu6_outputs[1][0] == "W":
         print("NCTU6 says white win")
         return nctu6_outputs[1][2:4].lower(), nctu6_outputs[2][2:4].lower()
     else:
