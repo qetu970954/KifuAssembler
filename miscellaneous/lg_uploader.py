@@ -125,7 +125,7 @@ def main():
 
         game_ids = re.findall("gid=[0-9]*", games_to_play)  # Regular expression search for game ids
 
-        # For each gam:
+        # For each game:
         #   step1. Forward it to NCTU6, let it assess if there is a direct win. If it is, return NCTU6's move to LG
         #   step2. Otherwise, launch CZF to calculate the next move
         for gid in tqdm.tqdm(game_ids):
@@ -134,8 +134,14 @@ def main():
 
             sgf = requests.get(f'http://www.littlegolem.net/servlet/sgf/{gid}/game{gid}.txt').text
 
-            mv1, mv2 = GetNCTU6Result(sgf)
+            # Calculating moves and winrate, either by NCTU6 or by CZF
+            mv1, mv2, winrate = None, None, None
+
+            if config["nctu6_working_dir"]:
+                mv1, mv2 = GetNCTU6Result(sgf)
+
             if mv1 and mv2:
+                print(f"NCTU6 found a (proven) winning strategy!")
                 print(f"NCTU6's assessment is : mv1 = {mv1}, mv2 = {mv2}")
                 winrate = "proven"
 
@@ -159,7 +165,7 @@ def main():
 
 
 if __name__ == '__main__':
-    with open("miscellaneous/lg_uploader_config.yml", encoding="utf-8") as stream:
+    with open("lg_uploader_config.yml", encoding="utf-8") as stream:
         config = yaml.safe_load(stream)
 
     while True:
