@@ -21,7 +21,6 @@ $ poetry shell
 
 Run setup script:
 ```bash
-$ ./windows_setup.cmd   # On Windows
 $ ./ubuntu_setup.sh    # On Ubuntu
 ```
 This should generates `expert.json` and `game.json` in the `results/` directory,
@@ -41,17 +40,17 @@ $ scrapy crawl kifu -a player_name=Lomaben -o results/Lomaben.json
 # Crawl every expert's kifus
 $ scrapy crawl kifu -o results/all.json 
 ```
-This spider internally looks for `results/game.json` and `result/expert.json` and use it's content, so you must make sure that file exist before you run this.
+This command looks for `results/game.json` and `result/expert.json` and use it's content, so you must make sure that file exist before you run this.
 
 
 ### Assemble !!
 
 Let KifuAssembler assemble the kifu's you crawled
 ```bash
-$ python -m KifuAssembler.assemble -s=<InputFile> -o=<OutputFile> 
+$ python -m KifuAssembler.json_to_tree -s=<InputFile> -o=<OutputFile>
 ```
-If not specified, the result will be put in `results/result.sgf`
+If not specified, the result will be placed in `results/result.sgf`
 e.g.:
 ```bash
-$ python -m KifuAssembler.assemble -s=results/Lomaben.json
+$ python -m KifuAssembler.json_to_tree -s=results/Lomaben.json
 ```

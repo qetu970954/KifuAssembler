@@ -3,7 +3,7 @@ import argparse
 import tqdm
 
 from KifuAssembler.src.extractor import Extractor
-from KifuAssembler.src.incorporator import to_GoGui_sgf
+from KifuAssembler.src.assembler import to_GoGui_sgf
 
 parser = argparse.ArgumentParser(
     description="See the contents in a json file, and make gogui-compatible sgfs file according to the content.")

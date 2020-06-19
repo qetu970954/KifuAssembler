@@ -66,15 +66,14 @@ def rearrange(moves):
     return result
 
 
-class Incorporator:
+class Assembler:
     r"""
-    An incorporator that can merge various game moves into a tree-like structure.
+    An assembler that can merge various game moves into a tree-like structure.
 
     This class is used by json_to_tree.py for assembling different kifus.
     """
 
-    def __init__(self, moves=None, url="_sample_url_", *, game_results="Draw", merge_symmetric_moves=False,
-                 use_c6_merge_rules=False):
+    def __init__(self, moves=None, url="_sample_url_", *, game_results="Draw", merge_symmetric_moves=False):
         self.root = AnyNode(
             data=Root(),
             parent=None,
@@ -88,18 +87,17 @@ class Incorporator:
         )
 
         self.merge_symmetric_moves = merge_symmetric_moves
-        self.use_c6_merge_rules = use_c6_merge_rules
 
         if moves:
-            self.incorporate(moves, url, game_results)
+            self.assemble(moves, url, game_results)
 
-    def incorporate(self, moves: list, url="_sample_url_", game_results="Draw"):
+    def assemble(self, moves: list, url="_sample_url_", game_results="Draw"):
         if self.merge_symmetric_moves:
-            self._symmetrical_incorporate(moves, url, game_results)
+            self._symmetrical_assemble(moves, url, game_results)
         else:
-            self._incorporate(moves, url, game_results)
+            self._normal_assemble(moves, url, game_results)
 
-    def _incorporate(self, moves: list, url="_sample_url_", game_results="Draw"):
+    def _normal_assemble(self, moves: list, url="_sample_url_", game_results="Draw"):
         # Start from root node
         current_node = self.root
 
@@ -143,7 +141,7 @@ class Incorporator:
                 )
                 current_node = new_node
 
-    def _symmetrical_incorporate(self, moves: list, url="_sample_url_", game_results="Draw"):
+    def _symmetrical_assemble(self, moves: list, url="_sample_url_", game_results="Draw"):
         def find_game_turns_that_is_not_present_on_the_tree(mvs):
             current_node = self.root
             idx, turns = 0, 0
@@ -177,7 +175,7 @@ class Incorporator:
         assert all([find_game_turns_that_is_not_present_on_the_tree(moves_list) <= largest_depth for moves_list in
                     symmetric_moves_lists])
 
-        self._incorporate(mvs, url, game_results)
+        self._normal_assemble(mvs, url, game_results)
 
     def top_n_moves(self, amount: int):
         def dfs(current_node, depth, sgf: str):
@@ -217,9 +215,9 @@ class Incorporator:
                 return result[:amount:]
 
 
-def to_tuple(an_Incorporator: Incorporator):
+def to_tuple(an_Assembler: Assembler):
     """Returns a pre-order tree traversal node sequence"""
-    return copy.deepcopy(tuple(node.data for node in PreOrderIter(an_Incorporator.root)))
+    return copy.deepcopy(tuple(node.data for node in PreOrderIter(an_Assembler.root)))
 
 
 def is_end_of_turn(d):
@@ -231,8 +229,8 @@ def is_end_of_turn(d):
         return False
 
 
-def dump_to(an_Incorporator: Incorporator, file: TextIO, *, editor_style):
-    """Dump the content in an incorporator to a file (in sgf format)."""
+def dump_to(an_Assembler: Assembler, file: TextIO, *, editor_style):
+    """Dump the tree structure inside an assembler to a file (in sgf format)."""
 
     def simple_tree_traverse(current_node, file: TextIO):
         file.write(detailed_str(current_node))
@@ -265,11 +263,11 @@ def dump_to(an_Incorporator: Incorporator, file: TextIO, *, editor_style):
 
     file.write("(;GM[511]")
     if editor_style:
-        editor_style_tree_traverse(an_Incorporator.root, 0, len(an_Incorporator.root.children) > 1, "", file)
+        editor_style_tree_traverse(an_Assembler.root, 0, len(an_Assembler.root.children) > 1, "", file)
     else:
-        simple_tree_traverse(an_Incorporator.root, file)
+        simple_tree_traverse(an_Assembler.root, file)
     file.write(")")
-    file.write(detailed_str(an_Incorporator.root))
+    file.write(detailed_str(an_Assembler.root))
 
 
 def to_GoGui_sgf(a_str):

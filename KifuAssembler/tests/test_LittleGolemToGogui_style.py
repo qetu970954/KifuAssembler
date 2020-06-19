@@ -1,4 +1,4 @@
-from KifuAssembler.src.incorporator import to_GoGui_sgf, to_Pure_sgf
+from KifuAssembler.src.assembler import to_GoGui_sgf, to_Pure_sgf
 
 
 def test_ToGoGuiSgf_CorrectlyReturns():

@@ -10,7 +10,7 @@ import yaml
 from scrapy.selector import Selector
 
 from KifuAssembler.src.utils import KifuParser
-from KifuAssembler.src.incorporator import to_Pure_sgf
+from KifuAssembler.src.assembler import to_Pure_sgf
 
 
 def get_convert_table():

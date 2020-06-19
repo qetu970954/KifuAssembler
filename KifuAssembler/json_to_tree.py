@@ -3,7 +3,7 @@ import argparse
 import os
 import tqdm
 from KifuAssembler.src.extractor import Extractor
-from KifuAssembler.src.incorporator import Incorporator, dump_to
+from KifuAssembler.src.assembler import Assembler, dump_to
 from KifuAssembler.src.utils import KifuParser
 
 parser = argparse.ArgumentParser(description="Assemble kifus to a kifu tree.")
@@ -30,9 +30,9 @@ parser.add_argument('-l', '--lower_bound',
     help="Ignore moves which has length smaller than this flag."
 )
 
-parser.add_argument('-c6',
+parser.add_argument('--use_editor_style',
     action='store_true',
-    help="Use connect6 merge rule. (I.e., (W0, W1) and (W1, W0) are considered interchangeable.)"
+    help="Use connect6 rule when dumping tree. (I.e., (W0, W1) and (W1, W0) are considered interchangeable.)"
 )
 
 parser.add_argument('--num_of_openings',
@@ -53,9 +53,8 @@ if __name__ == '__main__':
     game_results = Extractor().extract(args.json_src, "game_result")
 
     print("Assembling to a tree...")
-    incorporator = Incorporator(
+    assembler = Assembler(
         merge_symmetric_moves=args.enable_symmetrical_assembling,
-        use_c6_merge_rules=args.c6
     )
 
     with tqdm.tqdm(total=len(kifus)) as pbar:
@@ -67,7 +66,7 @@ if __name__ == '__main__':
             if len(moves) < args.lower_bound:
                 number_of_skipped_moves += 1
             else:
-                incorporator.incorporate(moves, url, game_results)
+                assembler.assemble(moves, url, game_results)
 
             pbar.update(1)
 
@@ -75,8 +74,8 @@ if __name__ == '__main__':
 
     if args.num_of_openings != 0:
         with open("openings.txt", "w") as f:
-            f.write(str(incorporator.top_n_moves(args.num_of_openings)))
+            f.write(str(assembler.top_n_moves(args.num_of_openings)))
 
     print(f"Writing to file '{args.output_file}'...>")
     with open(args.output_file, "w") as f:
-        dump_to(incorporator, f, editor_style=args.c6)
+        dump_to(assembler, f, editor_style=args.use_editor_style)
