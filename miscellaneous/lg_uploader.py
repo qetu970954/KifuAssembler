@@ -77,8 +77,8 @@ def GetCZFResult(sgf):
          f'-v={working_dir.as_posix()}:/work',
          '-w=/work', 'czf',
          f'./{config["working_dir"]["ai_path"]}/ai',
-         f'./{config["working_dir"]["network_path"]}/latest.weight',
-         f'./{config["working_dir"]["network_path"]}/latest.model',
+         f'./{config["working_dir"]["network_path"]}/{config["weight_name"]}.weight',
+         f'./{config["working_dir"]["network_path"]}/{config["weight_name"]}.model',
          f'{config["sim_cnt"]}'],
         stdin=subprocess.PIPE, stdout=subprocess.PIPE, encoding="utf-8", bufsize=1
     )
