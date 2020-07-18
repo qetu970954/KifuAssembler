@@ -113,10 +113,10 @@ def main():
                'password': config['password']}
 
     with requests.Session() as sess:
-        player_cookies = sess.post("http://www.littlegolem.net/jsp/login/", data=payload).cookies
+        sess.post("https://www.littlegolem.net/jsp/login/", data=payload)
 
         # Fetch games need to played
-        r = requests.get("https://www.littlegolem.net/jsp/game/", cookies=player_cookies)
+        r = sess.get("https://www.littlegolem.net/jsp/game/index.jsp")
 
         games_to_play = str(
             Selector(text=r.text).css(
@@ -153,10 +153,8 @@ def main():
 
             print(f"Sending {mv1}{mv2} to gid={gid}")
 
-            requests.post('https://www.littlegolem.net/jsp/game/game.jsp',
-                params={"sendgame": f"{gid}", "sendmove": f"{mv1}{mv2}"},
-                cookies=player_cookies
-            )
+            sess.post('https://www.littlegolem.net/jsp/game/game.jsp',
+                params={"sendgame": f"{gid}", "sendmove": f"{mv1}{mv2}"})
 
             text_output_dir = Path(config["game_text_output_dir"])
             text_output_dir.mkdir(exist_ok=True, parents=True)
