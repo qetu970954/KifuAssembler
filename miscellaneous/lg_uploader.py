@@ -49,11 +49,10 @@ def GetNCTU6Result(sgf):
     except KeyboardInterrupt:
         proc.terminate()
         return
-
     nctu6_outputs = proc.stdout.readline().split(';')
 
     print(f"nctu6_output is {nctu6_outputs}")
-
+    proc.termintae()
     if nctu6_outputs[3] in ["C[B:w]", "C[B:a_w]"] and nctu6_outputs[1][0] == "B":
         print("NCTU6 says black win")
         return nctu6_outputs[1][2:4].lower(), nctu6_outputs[2][2:4].lower()
